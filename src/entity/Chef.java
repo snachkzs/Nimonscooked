@@ -1,56 +1,72 @@
 package entity;
 
 import input.KeyHandler;
+import main.GamePanel;
+import java.awt.Rectangle;
 
 public class Chef {
 
     private int x, y;
     private int speed;
     private String direction;
-    private int spriteCounter = 0;
-    private int spriteNum = 1;
+    private boolean isMoving = false;
+    public Rectangle collisionArea;
+    public boolean collisionOn = false;
+    GamePanel gp;
 
     KeyHandler keyH;
 
-    public Chef(KeyHandler keyH){
+    public Chef(GamePanel gp, KeyHandler keyH){
+        this.gp = gp;
         this.keyH = keyH;
 
-        x = 100;
-        y = 100;
+        x = 150;
+        y = 150;
         speed = 4;
         direction = "down";
+
+        collisionArea = new Rectangle(8, 16, 32, 32);
     }
 
     public void update(){
 
         if (keyH.upPressed == true|| keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true){
+            isMoving = true;
             if(keyH.upPressed == true){
                 direction = "up";
-                y -= speed;
             }
             else if(keyH.downPressed == true){
                 direction = "down";
-                y += speed;
             }
             else if(keyH.leftPressed == true){
                 direction = "left";
-                x -= speed;
             }
             else if(keyH.rightPressed == true){
                 direction = "right";
-                x += speed;
             }
 
-            spriteCounter++;
-            if (spriteCounter > 12){
-                if (spriteNum == 1){
-                    spriteNum = 2;
+            collisionOn = false;
+            gp.collisionChecker.checkTile(this);
+
+            if (collisionOn == false){
+                switch(direction){
+                    case "up":
+                        y -= speed;
+                        break;
+                    case "down":
+                        y += speed;
+                        break;
+                    case "left":
+                        x -= speed;
+                        break;
+                    case "right":
+                        x += speed;
+                        break;
                 }
-                else if (spriteNum == 2){
-                    spriteNum = 1;
-                }
-                spriteCounter = 0;
             }
+        }
+        else {
+            isMoving = false;
         }
     }
     
@@ -63,8 +79,18 @@ public class Chef {
     public String getDirection() { 
         return direction; 
         }
-    public int getSpriteNum() { 
-        return spriteNum; 
+    public int getSpeed() { 
+        return speed; 
+        }
+    public boolean isMoving() {
+        return isMoving;
+    }
+    
+    public void setX(int x) { 
+        this.x = x; 
+        }
+    public void setY(int y) { 
+        this.y = y; 
         }
     
 }

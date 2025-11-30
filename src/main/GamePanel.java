@@ -9,6 +9,7 @@ import input.KeyHandler;
 import entity.Chef;
 import view.ChefView;
 import map.TileManager;
+import controller.CollisionChecker;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -17,18 +18,19 @@ public class GamePanel extends JPanel implements Runnable{
     final int scale = 3;
 
     public final int tileSize = OriginalTileSize * scale; // 48 x 48
-    final int maxScreenCol = 14;
-    final int maxScreenRow = 10;
+    public final int maxScreenCol = 14;
+    public final int maxScreenRow = 10;
     final int screenWidth = tileSize * maxScreenCol; //672 pixel
     final int screenHeight = tileSize * maxScreenRow; // 480 pixel
 
     int FPS = 60;
 
-    TileManager tileM = new TileManager(this);
+    public TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
-    CollisionChecker collisionChecker = new CollisionChecker(this);
+    public CollisionChecker collisionChecker = new CollisionChecker(this);
     Chef chef = new Chef(this, keyH);
+    ChefView chefView = new ChefView();
 
     public GamePanel(){
         
