@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import input.KeyHandler;
 import entity.Chef;
 import view.ChefView;
+import map.TileManager;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -23,10 +24,11 @@ public class GamePanel extends JPanel implements Runnable{
 
     int FPS = 60;
 
+    TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
-    Chef chef = new Chef(keyH);
-    ChefView chefView = new ChefView();
+    CollisionChecker collisionChecker = new CollisionChecker(this);
+    Chef chef = new Chef(this, keyH);
 
     public GamePanel(){
         
@@ -82,6 +84,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2 = (Graphics2D)g;
 
+        tileM.draw(g2);
         chefView.render(g2, chef, tileSize);
 
         g2.dispose();
