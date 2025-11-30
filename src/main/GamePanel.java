@@ -7,6 +7,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import input.KeyHandler;
 import entity.Chef;
+<<<<<<< Updated upstream
+=======
+import view.ChefView;
+import map.TileManager;
+>>>>>>> Stashed changes
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -22,6 +27,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     int FPS = 60;
 
+    TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
     Chef chef = new Chef(this, keyH);
@@ -86,7 +92,12 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2 = (Graphics2D)g;
 
+<<<<<<< Updated upstream
         chef.draw(g2);
+=======
+        tileM.draw(g2);
+        chefView.render(g2, chef, tileSize);
+>>>>>>> Stashed changes
 
         g2.dispose();
     }
