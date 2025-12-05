@@ -29,8 +29,10 @@ public class GamePanel extends JPanel implements Runnable{
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
     public CollisionChecker collisionChecker = new CollisionChecker(this);
+    // public AssetSetter assetSetter = new AssetSetter(this);
     Chef chef = new Chef(this, keyH);
     ChefView chefView = new ChefView();
+    // public item .Item[] itemList = new item.Item[20]; //ganti sesuai banyak item
 
     public GamePanel(){
         

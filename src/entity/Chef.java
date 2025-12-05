@@ -3,6 +3,8 @@ package entity;
 import input.KeyHandler;
 import main.GamePanel;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+
 
 public class Chef {
 
@@ -13,6 +15,8 @@ public class Chef {
     public Rectangle collisionArea;
     public boolean collisionOn = false;
     GamePanel gp;
+    public ArrayList<Chef> inventory = new ArrayList<>();
+    public final int INVENTORY_SIZE = 1;
 
     KeyHandler keyH;
 
