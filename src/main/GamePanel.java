@@ -7,6 +7,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import input.KeyHandler;
 import entity.Chef;
+import view.ChefView;
+import map.TileManager;
+import controller.CollisionChecker;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -22,15 +25,12 @@ public class GamePanel extends JPanel implements Runnable{
 
     int FPS = 60;
 
+    public TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
+    public CollisionChecker collisionChecker = new CollisionChecker(this);
     Chef chef = new Chef(this, keyH);
-
-
-    //set player default position
-    int playerX = 100;
-    int playerY = 100;
-    int playerSpeed = 4;
+    ChefView chefView = new ChefView();
 
     public GamePanel(){
         
@@ -86,7 +86,8 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2 = (Graphics2D)g;
 
-        chef.draw(g2);
+        tileM.draw(g2);
+        chefView.render(g2, chef, tileSize);
 
         g2.dispose();
     }
