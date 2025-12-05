@@ -80,7 +80,7 @@ public class TileManager{
 
             tile[10] = new Tile();
             tile[10].image = ImageIO.read(getClass().getResourceAsStream("/tiles/floor.png"));
-            tile[10].collision = false; // Floor tidak ada collision
+            tile[10].collision = false;
         
             tile[11] = new Tile();
             tile[11].image = ImageIO.read(getClass().getResourceAsStream("/tiles/floor2.png"));
