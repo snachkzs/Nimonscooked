@@ -17,4 +17,8 @@ public abstract class KitchenUtensil {
     public List<Preparable> getContents() {
         return this.contents;
     }
+
+    // abstract method: membuat plate dan frying pan untuk memberi alamat gambarnya
+    public abstract String getAssetPath();
+
 }

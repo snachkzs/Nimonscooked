@@ -49,4 +49,10 @@ public class FryingPan extends KitchenUtensil implements CookingDevice {
             // nanti di sini panggil method cook
         }
     }
+
+    @Override
+    public String getAssetPath() {
+        return "/assets/kitchen-utensil/frying_pan.png";
+    }
+    
 }

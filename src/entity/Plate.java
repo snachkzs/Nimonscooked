@@ -28,4 +28,15 @@ public class Plate extends KitchenUtensil {
         this.contents.clear(); 
         System.out.println("Plate is now dirty.");
     }
+
+    @Override
+    public String getAssetPath() {
+        if (this.isClean) {
+            // kalo piring bersih, ke file gambar piring bersih
+            return "/assets/kitchen-utensil/plate_clean.png";
+        } else {
+            // kalo piring kotor, ke file gambar piring kotor
+            return "/assets/kitchen-utensil/plate_dirty.png";
+        }
+    }
 }
