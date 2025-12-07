@@ -3,6 +3,7 @@ package entity;
 import input.KeyHandler;
 import main.GamePanel;
 import java.awt.Rectangle;
+import entity.item.Item;
 
 public class Chef {
 
@@ -15,6 +16,7 @@ public class Chef {
     GamePanel gp;
 
     KeyHandler keyH;
+    public Item inventory;
 
     public Chef(GamePanel gp, KeyHandler keyH){
         this.gp = gp;
