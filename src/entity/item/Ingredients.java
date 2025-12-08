@@ -1,7 +1,7 @@
 package entity.item;
 
 public abstract class Ingredients extends Item {
-    protected boolean raw = true;
+    public boolean raw = true;
 
     @Override
     public String getType() {

@@ -1,12 +1,12 @@
 package entity.item;
 
-public class Daging extends ingredients implements InterfaceChopable, InterfaceCookable, InterfacePlatable {
+public class Daging extends Ingredients implements InterfaceChopable, InterfaceCookable, InterfacePlatable {
     private boolean isChopped;
     private boolean isCooked;
     
     public Daging() {
-        this.name = "Daging";
-        this.raw = true;
+        name = "Daging";
+        raw = true;
         this.isChopped = false;
         this.isCooked = false;
     }
@@ -18,7 +18,7 @@ public class Daging extends ingredients implements InterfaceChopable, InterfaceC
 
     @Override
     public void canBeChopped() {
-        if (this.raw && !this.isChopped) {
+        if (raw && !this.isChopped) {
             this.isChopped = true;
             System.out.println("Daging telah dicincang.");
         } else {
@@ -34,8 +34,8 @@ public class Daging extends ingredients implements InterfaceChopable, InterfaceC
     @Override
     public Item getChoppedItem() {
         this.isChopped = true;
-        this.raw = false;
-        this.name = "Daging Potong";
+        raw = false;
+        name = "Daging Potong";
         return this;
     }
 
@@ -58,7 +58,7 @@ public class Daging extends ingredients implements InterfaceChopable, InterfaceC
     public Item getCookedItem() {
         if (isChopped) {
             this.isCooked = true;
-            this.name = "Patty Matang";
+            name = "Patty Matang";
             return this;
         }
         return null;
