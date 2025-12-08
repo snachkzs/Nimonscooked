@@ -1,6 +1,7 @@
 package main;
 
 import entity.item.Daging;
+import entity.item.Keju;
 
 public class AssetSetter {
     
@@ -16,6 +17,9 @@ public class AssetSetter {
 
         gp.itemList[1] = new Daging();
         gp.itemList[1].setPosition(300, 250);
+
+        gp.itemList[2] = new Keju();
+        gp.itemList[2].setPosition(400, 300);
     }
 
     // sebentar bingung

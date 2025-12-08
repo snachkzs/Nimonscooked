@@ -7,6 +7,12 @@ public class Keju extends Ingredients implements InterfaceChopable, InterfacePla
     public Keju() {
         this.name = "Keju";
         this.raw = true;
+
+        try{
+            image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/keju.jpg"));
+        } catch(java.io.IOException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

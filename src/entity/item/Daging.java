@@ -1,4 +1,6 @@
 package entity.item;
+import java.io.IOException;
+
 
 public class Daging extends Ingredients implements InterfaceChopable, InterfaceCookable, InterfacePlatable {
     private boolean isChopped;
@@ -9,6 +11,12 @@ public class Daging extends Ingredients implements InterfaceChopable, InterfaceC
         raw = true;
         this.isChopped = false;
         this.isCooked = false;
+
+        try {
+            image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/dagingmentah.png"));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
