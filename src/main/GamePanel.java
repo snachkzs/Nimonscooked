@@ -8,8 +8,12 @@ import java.awt.Graphics2D;
 import input.KeyHandler;
 import entity.Chef;
 import view.ChefView;
+import entity.item.Daging;
+import view.DagingView;
 import map.TileManager;
 import controller.CollisionChecker;
+import controller.ChefManager;
+import entity.item.Item;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -29,10 +33,16 @@ public class GamePanel extends JPanel implements Runnable{
     KeyHandler keyH = new KeyHandler();
     Thread gameThread;
     public CollisionChecker collisionChecker = new CollisionChecker(this);
-    // public AssetSetter assetSetter = new AssetSetter(this);
+    public AssetSetter assetSetter = new AssetSetter(this);
+    DagingView dagingView = new DagingView();
     Chef chef = new Chef(this, keyH);
     ChefView chefView = new ChefView();
-    // public item .Item[] itemList = new item.Item[20]; //ganti sesuai banyak item
+    public entity.item.Item[] itemList = new entity.item.Item[20]; //ganti sesuai banyak item
+    
+    public ChefManager chefManager;
+
+
+    private boolean switchKeyPressed = false;
 
     public GamePanel(){
         
@@ -41,6 +51,9 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered(true); // better rendering
         this.addKeyListener(keyH);
         this.setFocusable(true);
+
+        chefManager = new ChefManager(this, keyH);
+        assetSetter.setItem();
     }
 
     public void startGameThread(){
@@ -78,19 +91,59 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update(){
-        chef.update();
+        if (keyH.switchPressed && !switchKeyPressed) {
+            chefManager.swapChef();
+            switchKeyPressed = true;
+        }
+        if (!keyH.switchPressed) {
+            switchKeyPressed = false;
+        }
+
+        chefManager.update();
 
     }
 
     public void paintComponent(Graphics g){
-
         super.paintComponent(g);
-
         Graphics2D g2 = (Graphics2D)g;
 
+        // Draw tiles
         tileM.draw(g2);
-        chefView.render(g2, chef, tileSize);
-
+        
+        // Draw items
+        for (int i = 0; i < itemList.length; i++) {
+            if (itemList[i] != null && itemList[i] instanceof Daging) {
+                dagingView.render(g2, (Daging)itemList[i], itemList[i].getX(), itemList[i].getY(), tileSize);
+            }
+        }
+        
+        // Draw both chefs
+        chefView.render(g2, chefManager.getChef1(), tileSize);
+        chefView.render(g2, chefManager.getChef2(), tileSize);
+        
+        // Draw UI indicators
+        drawUI(g2);
+        
         g2.dispose();
+    }
+    
+    private void drawUI(Graphics2D g2) {
+        
+        // Show active chef
+        // int activeIndex = chefManager.getActiveChefIndex();
+        // g2.drawString("Active: Chef " + (activeIndex + 1), 10, 30);
+        
+        
+        // // Show held items
+        // g2.setColor(Color.CYAN);
+        // if (chefManager.getChef1().isHoldingItem()) {
+        //     g2.drawString("Chef 1 holding: " + 
+        //         chefManager.getChef1().getHeldItem().getName(), 10, 120);
+        // }
+        // if (chefManager.getChef2().isHoldingItem()) {
+        //     g2.drawString("Chef 2 holding: " + 
+        //         chefManager.getChef2().getHeldItem().getName(), 10, 150);
+        // }
+        
     }
 }

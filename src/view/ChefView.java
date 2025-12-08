@@ -4,6 +4,7 @@ import entity.Chef;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import java.awt.Color;
 
 public class ChefView {
 
@@ -44,6 +45,18 @@ public class ChefView {
         
         BufferedImage image = getSprite(chef.getDirection(), spriteNum);
         g2.drawImage(image, chef.getX(), chef.getY(), tileSize, tileSize, null);
+
+        if (chef.isActive()) {
+            g2.setColor(Color.GREEN);
+            g2.fillOval(chef.getX() + tileSize/2 - 5, chef.getY() - 10, 10, 10);
+        }
+        
+        // Draw indicator for busy chef
+        if (chef.isBusy()) {
+            g2.setColor(Color.ORANGE);
+            g2.fillRect(chef.getX(), chef.getY() - 20, tileSize, 5);
+            // Progress bar could be added here
+        }
     }
     
     private BufferedImage getSprite(String direction, int spriteNum){

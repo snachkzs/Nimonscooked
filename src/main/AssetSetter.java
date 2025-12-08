@@ -1,12 +1,21 @@
 package main;
 
-// 
+import entity.item.Daging;
+
 public class AssetSetter {
     
     GamePanel gp;
 
     public AssetSetter(GamePanel gp){
         this.gp = gp;
+    }
+
+    public void setItem(){
+        gp.itemList[0] = new Daging();
+        gp.itemList[0].setPosition(200, 200);
+
+        gp.itemList[1] = new Daging();
+        gp.itemList[1].setPosition(300, 250);
     }
 
     // sebentar bingung
