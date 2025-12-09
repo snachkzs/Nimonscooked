@@ -38,16 +38,17 @@ public class CuttingStation extends Station {
         new Thread(() -> {
             try {
                 System.out.println("Mulai memotong... (Busy 3 detik)");
-                // TODO: Di real game, set chef.setBusy(true);
+                chef.setBusy(true);
                 
-                Thread.sleep(3000); // Durasi 3 Detik sesuai Spec M2
+                Thread.sleep(3000); 
                 
-                item.getChoppedItem(); // Ubah state jadi Chopped
+                item.getChoppedItem(); 
                 System.out.println("Selesai memotong!");
                 
-                // TODO: Di real game, set chef.setBusy(false);
             } catch (InterruptedException e) {
                 System.out.println("Proses memotong terganggu.");
+            } finally {
+                chef.setBusy(false);
             }
         }).start();
     }

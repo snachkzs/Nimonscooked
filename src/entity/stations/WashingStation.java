@@ -37,6 +37,7 @@ public class WashingStation extends Station {
         new Thread(() -> {
             try {
                 System.out.println("Mencuci piring... (Busy 3 detik)");
+                chef.setBusy(true);
                 
                 Thread.sleep(3000);
                 
@@ -46,10 +47,10 @@ public class WashingStation extends Station {
                     cleanPlates.push(p);
                     System.out.println("Piring bersih! (Tersedia: " + cleanPlates.size() + ")");
                 }
-                
-                // TODO: chef.setBusy(false);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } finally {
+                chef.setBusy(false);
             }
         }).start();
     }

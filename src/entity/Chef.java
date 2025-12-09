@@ -6,7 +6,9 @@ import java.awt.Rectangle;
 import entity.item.Item;
 
 public class Chef {
-
+    private String id;
+    private String name;
+    private boolean isBusy = false;
     private int x, y;
     private int speed;
     private String direction;
@@ -18,9 +20,11 @@ public class Chef {
     KeyHandler keyH;
     public Item inventory;
 
-    public Chef(GamePanel gp, KeyHandler keyH){
+    public Chef(GamePanel gp, KeyHandler keyH, String id, String name){
         this.gp = gp;
         this.keyH = keyH;
+        this.id = id;
+        this.name = name;
 
         x = 150;
         y = 150;
@@ -31,7 +35,10 @@ public class Chef {
     }
 
     public void update(){
-
+        if (isBusy) {
+            isMoving = false; 
+            return;
+        }
         if (keyH.upPressed == true|| keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true){
             isMoving = true;
             if(keyH.upPressed == true){
@@ -71,19 +78,33 @@ public class Chef {
             isMoving = false;
         }
     }
+
+    public void setBusy(boolean busy) {
+        this.isBusy = busy;
+    }
+
+    public boolean isBusy() {
+        return isBusy;
+    }
     
+    public String getId() { 
+        return id; 
+    }
+    public String getName() { 
+        return name; 
+    }
     public int getX() { 
         return x; 
-        }
+    }
     public int getY() { 
         return y; 
-        }
+    }
     public String getDirection() { 
         return direction; 
-        }
+    }
     public int getSpeed() { 
         return speed; 
-        }
+    }
     public boolean isMoving() {
         return isMoving;
     }
