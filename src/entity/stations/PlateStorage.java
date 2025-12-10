@@ -10,22 +10,37 @@ public class PlateStorage extends Station {
 
     public PlateStorage(int x, int y, int width, int height) {
         super(x, y, width, height);
-        // Initialize with 4 plates
         for (int i = 0; i < maxPlates; i++) {
-            plates.push(new Plate());
+            Plate cleanPlate = new Plate();
+            plates.push(cleanPlate);
         }
     }
 
     @Override
     public void interact(Chef chef) {
-        if (!plates.isEmpty() && chef.getInventory().isEmpty()) {
-            chef.getInventory().add(plates.pop());
-            System.out.println("Mengambil piring (" + plates.size() + " tersisa)");
-        } else if (plates.isEmpty()) {
-            System.out.println("Piring habis!");
-        } else {
-            System.out.println("Inventory penuh!");
+        if (!chef.getInventory().isEmpty()) {
+            System.out.println("Tidak bisa menaruh item di Plate Storage!");
+            return;
         }
+        
+        if (plates.isEmpty()) {
+            System.out.println("❌ Piring habis! Tunggu piring kotor kembali dari serving.");
+            return;
+        }
+        
+        Plate plate = plates.pop();
+        chef.getInventory().add(plate);
+        
+        if (plate.isClean()) {
+            System.out.println("✅ Mengambil piring bersih ✨ (" + plates.size() + " tersisa)");
+        } else {
+            System.out.println("🧼 Mengambil piring kotor (cuci di Washing Station dulu!) (" + plates.size() + " tersisa)");
+        }
+    }
+    
+    public void addDirtyPlate(Plate plate) {
+        plates.add(0, plate); // Add to BOTTOM of stack (index 0)
+        System.out.println("🍽️  Piring kotor ditambahkan ke BOTTOM stack (" + plates.size() + " total plates)");
     }
 
     @Override

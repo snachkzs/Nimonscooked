@@ -2,10 +2,17 @@ package entity.stations;
 
 import entity.Chef;
 import entity.item.Item;
+import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class Station {
     protected Item storedItem;
-    public int x, y, width, height; // Public untuk bisa diakses dari Chef
+    public int x, y, width, height;
+    
+    // Lock untuk thread-safe access
+    protected final ReentrantLock lock = new ReentrantLock();
+    
+    // Track chef yang sedang interact dengan station ini
+    protected Chef interactingChef = null;
 
     public Station(int x, int y, int width, int height) {
         this.x = x;
@@ -18,20 +25,56 @@ public abstract class Station {
         return storedItem;
     }
     
-    public void setStoredItem(Item item) {
+    public synchronized void setStoredItem(Item item) {
         this.storedItem = item;
     }
     
-    public boolean hasItem() {
+    public synchronized boolean hasItem() {
         return storedItem != null;
     }
     
-    public Item takeItem() {
+    public synchronized Item takeItem() {
         Item item = this.storedItem;
         this.storedItem = null;
         return item;
     }
     
+    /**
+     * Try to acquire lock for station interaction
+     * Returns true if lock acquired, false if another chef is using
+     */
+    public boolean tryLock(Chef chef) {
+        if (lock.tryLock()) {
+            interactingChef = chef;
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Release lock after interaction complete
+     */
+    public void unlock(Chef chef) {
+        if (interactingChef == chef) {
+            interactingChef = null;
+            lock.unlock();
+        }
+    }
+    
+    /**
+     * Check if station is being used by another chef
+     */
+    public boolean isOccupied() {
+        return lock.isLocked();
+    }
+    
+    public Chef getInteractingChef() {
+        return interactingChef;
+    }
+    
     public abstract void interact(Chef chef);
     public abstract String getType();
+
+    public void update() {
+    }
 }

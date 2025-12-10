@@ -2,71 +2,68 @@ package entity.stations;
 
 import entity.Chef;
 import entity.item.Item;
+import entity.item.FryingPan;
+import entity.item.Plate;
 import entity.item.InterfaceCookable;
 
 public class CookingStation extends Station {
-    private boolean isCooking = false;
+    private FryingPan fryingPan; 
 
     public CookingStation(int x, int y, int width, int height) {
         super(x, y, width, height);
+        this.fryingPan = new FryingPan(); // frying pan ada di cooking station
     }
 
     @Override
     public void interact(Chef chef) {
-        if (this.storedItem == null && !chef.getInventory().isEmpty()) {
-            Item item = chef.getInventory().get(0);
-            if (item instanceof InterfaceCookable) {
-                // Check if it's Daging that needs to be chopped first
-                if (item instanceof entity.item.Daging) {
-                    entity.item.Daging daging = (entity.item.Daging) item;
-                    if (!daging.isChopped()) {
-                        System.out.println("Daging harus dipotong dulu sebelum dimasak!");
-                        return;
-                    }
+        Item heldItem = chef.getInventory().isEmpty() ? null : chef.getInventory().get(0);
+
+        // place frying pan on cooking station
+        if (heldItem instanceof FryingPan) {
+            if (fryingPan == null) {
+                fryingPan = (FryingPan) chef.getInventory().remove(0);
+                System.out.println("Menaruh Frying Pan di Cooking Station");
+                
+                if (fryingPan.hasIngredient() && !fryingPan.isCooking()) {
+                    fryingPan.startCooking();
                 }
-                this.storedItem = chef.getInventory().remove(0);
-                System.out.println("Menaruh item di Kompor.");
-                startCookingProcess();
             } else {
-                System.out.println("Item ini tidak bisa dimasak!");
+                System.out.println("Cooking Station sudah ada Frying Pan!");
             }
-            return;
         }
-        if (this.storedItem != null && chef.getInventory().isEmpty()) {
-            chef.getInventory().add(this.storedItem);
-            this.storedItem = null;
-            this.isCooking = false;
-            System.out.println("Mengambil item dari kompor.");
+        // chef takes frying pan
+        else if (heldItem == null && fryingPan != null) {
+            chef.getInventory().add(fryingPan);
+            System.out.println("Mengambil Frying Pan dari Cooking Station");
+            fryingPan = null;
+        }
+        // chef takes item
+        else if (heldItem instanceof Plate && fryingPan != null) {
+            Plate plate = (Plate) heldItem;
+            fryingPan.transferToPlate(plate);
+        }
+        // cheft transfers ingredient to frying pan
+        else if (heldItem != null && fryingPan != null) {
+            boolean added = fryingPan.addIngredient(heldItem);
+            if (added) {
+                chef.getInventory().remove(0);
+                fryingPan.startCooking();
+            }
         }
     }
 
-    private void startCookingProcess() {
-        isCooking = true;
-        
-        new Thread(() -> {
-            try {
-                InterfaceCookable food = (InterfaceCookable) storedItem;
-                System.out.println("Kompor ON: Sedang memasak... (12s)");
-                
-                Thread.sleep(12000);
-                
-                if (isCooking && storedItem != null) {
-                    storedItem = food.getCookedItem();
-                    System.out.println("MAKANAN MATANG! (Segera ambil dalam 12s!)");
-                } else {
-                    return;
-                }
+    public void update() {
+        if (fryingPan != null) {
+            fryingPan.updateCooking();
+        }
+    }
 
-                Thread.sleep(12000);
-                
-                if (isCooking && storedItem != null) {
-                    System.out.println("GOSONG! Makanan hangus (Burned).");
-                }
+    public boolean hasFryingPan() {
+        return fryingPan != null;
+    }
 
-            } catch (InterruptedException e) {
-                System.out.println("Cooking interrupted.");
-            }
-        }).start();
+    public FryingPan getFryingPan() {
+        return fryingPan;
     }
 
     @Override

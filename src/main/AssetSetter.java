@@ -12,20 +12,11 @@ public class AssetSetter {
         this.gp = gp;
     }
 
-    // public void setItem(){
-    //     gp.itemList[0] = new Daging();
-    //     gp.itemList[0].setPosition(200, 200);
-
-    //     gp.itemList[1] = new Daging();
-    //     gp.itemList[1].setPosition(300, 250);
-
-    //     gp.itemList[2] = new Keju();
-    //     gp.itemList[2].setPosition(400, 300);
-    // }
-
     public void setStation(){
         int stationIndex = 0;
         int ingredientStorageCount = 0;
+        PlateStorage plateStorageRef = null;
+        java.util.List<ServingCounter> servingCounters = new java.util.ArrayList<>();
         
         // 1 = cut, 2 = cook, 3 = assembly, 4 = serving, 5 = wash, 7 = plate, 8 = trash
         // 11 = daging, 12 = keju, 13 = roti, 14 = lettuce, 15 = tomat
@@ -49,13 +40,17 @@ public class AssetSetter {
                         station = new AssemblyStation(x, y, gp.tileSize, gp.tileSize);
                         break;
                     case 4: // Serving Counter
-                        station = new ServingCounter(x, y, gp.tileSize, gp.tileSize);
+                        ServingCounter newServingCounter = new ServingCounter(x, y, gp.tileSize, gp.tileSize);
+                        newServingCounter.setOrderManager(gp.orderManager);
+                        servingCounters.add(newServingCounter);
+                        station = newServingCounter;
                         break;
                     case 5: // Washing Station
                         station = new WashingStation(x, y, gp.tileSize, gp.tileSize);
                         break;
                     case 7: // Plate Storage
-                        station = new PlateStorage(x, y, gp.tileSize, gp.tileSize);
+                        plateStorageRef = new PlateStorage(x, y, gp.tileSize, gp.tileSize);
+                        station = plateStorageRef;
                         break;
                     case 8: // Trash Station
                         station = new TrashStation(x, y, gp.tileSize, gp.tileSize);
@@ -91,5 +86,11 @@ public class AssetSetter {
         
         System.out.println("Loaded " + stationIndex + " stations from map");
         System.out.println("- " + ingredientStorageCount + " ingredient storages");
-    }
+        
+        if (!servingCounters.isEmpty() && plateStorageRef != null) {
+            for (ServingCounter sc : servingCounters) {
+                sc.setPlateStorage(plateStorageRef);
+            }
+        } 
+    }    
 }

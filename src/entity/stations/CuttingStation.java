@@ -12,20 +12,18 @@ public class CuttingStation extends Station {
 
     @Override
     public void interact(Chef chef) {
-        // C key: Place item on station OR take item from station
+        // pickup/drop
         if (this.storedItem == null && !chef.getInventory().isEmpty()) {
-            // Place item on cutting station
+
             this.storedItem = chef.getInventory().remove(0);
             System.out.println("Menaruh " + storedItem.getName() + " di Cutting Station.");
             return;
         }
         
         if (this.storedItem != null && chef.getInventory().isEmpty()) {
-            // Take item from station (only if it's already chopped or not choppable)
             if (this.storedItem instanceof InterfaceChopable) {
                 InterfaceChopable itemPotong = (InterfaceChopable) this.storedItem;
                 if (itemPotong.isChopped()) {
-                    // Already chopped, can take it
                     chef.getInventory().add(this.storedItem);
                     System.out.println("Mengambil " + storedItem.getName() + " yang sudah dipotong.");
                     this.storedItem = null;
@@ -33,7 +31,6 @@ public class CuttingStation extends Station {
                     System.out.println("Item belum dipotong! Tekan V untuk memotong.");
                 }
             } else {
-                // Not choppable, just take it
                 chef.getInventory().add(this.storedItem);
                 System.out.println("Mengambil " + storedItem.getName() + " dari station.");
                 this.storedItem = null;
@@ -49,7 +46,6 @@ public class CuttingStation extends Station {
     }
     
     public void startCutting(Chef chef) {
-        // V key: Start chopping process (only if item is choppable and not chopped yet)
         if (this.storedItem == null) {
             System.out.println("Tidak ada item di cutting station untuk dicincang.");
             return;
@@ -77,20 +73,23 @@ public class CuttingStation extends Station {
     private void processCutting(Chef chef, InterfaceChopable item) {
         new Thread(() -> {
             try {
-                System.out.println("Mulai memotong... (Busy 3 detik)");
+                System.out.println(chef.getName() + " mulai memotong... (Busy 3 detik)");
                 chef.setBusy(true);
                 
+                // Lock the station during cutting process
                 Thread.sleep(3000);
                 
-                storedItem = item.getChoppedItem();
-                System.out.println("Selesai memotong!");
+                synchronized(this) {
+                    item.setChopped(true);
+                    System.out.println(chef.getName() + " selesai memotong! Tekan C untuk ambil.");
+                }
                 
+                chef.setBusy(false);
             } catch (InterruptedException e) {
-                System.out.println("Proses memotong terganggu.");
-            } finally {
+                e.printStackTrace();
                 chef.setBusy(false);
             }
-        }).start();
+        }, "Cutting-" + chef.getName()).start();
     }
 
     @Override
