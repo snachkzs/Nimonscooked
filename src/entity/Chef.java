@@ -1,7 +1,7 @@
 package entity;
 
 import controller.CollisionChecker;
-import input.KeyHandler;
+import utils.KeyHandler;
 import main.GamePanel;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -11,7 +11,8 @@ import entity.item.Ingredients;
 
 
 public class Chef {
-
+    private String id;
+    private String name;
     private int x, y;
     private int speed;
     private String direction;
@@ -33,13 +34,15 @@ public class Chef {
     private Future<?> currentTask;
     
     private int pickUpDropCooldown = 0;
-    private final int PICK_UP_DROP_DELAY = 15; // 15 frames (~0.25 seconds at 60 FPS)
+    private final int PICK_UP_DROP_DELAY = 15;
 
-    public Chef(GamePanel gp, KeyHandler keyH){
+    public Chef(GamePanel gp, KeyHandler keyH, String id, String name){
         this.gp = gp;
         this.keyH = keyH;
         this.x = 0;
         this.y = 0;
+        this.id = id;
+        this.name = name;
 
         speed = 4;
         direction = "down";
@@ -84,16 +87,23 @@ public class Chef {
         return isActive;
     }
 
-    public boolean isBusy() {
-        return isBusy;
-    }
-
     public String getCurrentAction() {
         return currentAction;
     }
 
     public void update(){
-        if(isActive && !isBusy){
+        // Check if busy first (from feature/recipe-and-order)
+        if (isBusy) {
+            isMoving = false;
+            if (currentTask != null && currentTask.isDone()) {
+                isBusy = false;
+                currentAction = "";
+            }
+            return;
+        }
+        
+        // Only process if active (from HEAD)
+        if (isActive) {
             isMoving = false;
             
             // Decrement cooldown
@@ -108,25 +118,25 @@ public class Chef {
                 pickUpDropCooldown = PICK_UP_DROP_DELAY;
             }
         
-            if (keyH.upPressed == true|| keyH.downPressed == true || keyH.leftPressed == true || keyH.rightPressed == true){
+            if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
                 isMoving = true;
-                if(keyH.upPressed == true){
+                if(keyH.upPressed){
                     direction = "up";
                 }
-                else if(keyH.downPressed == true){
+                else if(keyH.downPressed){
                     direction = "down";
                 }
-                else if(keyH.leftPressed == true){
+                else if(keyH.leftPressed){
                     direction = "left";
                 }
-                else if(keyH.rightPressed == true){
+                else if(keyH.rightPressed){
                     direction = "right";
                 }
 
                 collisionOn = false;
                 gp.collisionChecker.checkTile(this);
 
-                if (collisionOn == false){
+                if (!collisionOn){
                     switch(direction){
                         case "up":
                             y -= speed;
@@ -141,43 +151,20 @@ public class Chef {
                             x += speed;
                             break;
                     }
-                    isMoving = true;
                 }
-            }
-        }
-
-        if (isBusy) {
-            if (currentTask != null && currentTask.isDone()) {
-                isBusy = false;
-                currentAction = "";
             }
         }
     }
 
-    // public void performAction(Runnable action, String actionName) {
-    //     if (!isBusy) {
-    //         isBusy = true;
-    //         currentAction = actionName;
-    //         currentTask = taskScheduler.submit(action);
-    //     }
-    // }
-
-    // public void shutdownTaskScheduler() {
-    //     taskScheduler.shutdown();
-    // }
-
     public void pickUpDrop(int i){
         if (i != 999){
             if (inventory.isEmpty()) {
-                // Pick up item if inventory is empty
                 inventory.add((Item)gp.itemList[i]);
                 gp.itemList[i] = null;
             } else if (inventory.size() >= INVENTORY_SIZE) {
-                // Drop item if inventory is full
                 Item droppedItem = inventory.remove(0);
                 droppedItem.setPosition(this.x, this.y);
                 
-                // Find empty slot in itemList to place the dropped item
                 for (int j = 0; j < gp.itemList.length; j++) {
                     if (gp.itemList[j] == null) {
                         gp.itemList[j] = droppedItem;
@@ -186,11 +173,9 @@ public class Chef {
                 }
             }
         } else if (i == 999 && !inventory.isEmpty()) {
-            // Drop item when pressing E without any item nearby
             Item droppedItem = inventory.remove(0);
             droppedItem.setPosition(this.x, this.y);
             
-            // Find empty slot in itemList to place the dropped item
             for (int j = 0; j < gp.itemList.length; j++) {
                 if (gp.itemList[j] == null) {
                     gp.itemList[j] = droppedItem;
@@ -199,25 +184,52 @@ public class Chef {
             }
         }
     }
+
+    public void setBusy(boolean busy) {
+        this.isBusy = busy;
+    }
+
+    public boolean isBusy() {
+        return isBusy;
+    }
+    
+    public String getId() { 
+        return id; 
+    }
+    
+    public String getName() { 
+        return name; 
+    }
     
     public int getX() { 
         return x; 
-        }
+    }
+    
+    public void setX(int x) {
+        this.x = x;
+    }
+    
     public int getY() { 
         return y; 
-        }
+    }
+    
+    public void setY(int y) {
+        this.y = y;
+    }
+    
     public String getDirection() { 
         return direction; 
-        }
+    }
+    
     public int getSpeed() { 
         return speed; 
-        }
+    }
+    
     public boolean isMoving() {
         return isMoving;
     }
     
     public ArrayList<Item> getInventory() {
-        return (ArrayList<Item>) inventory;
+        return inventory;
     }
-    
 }

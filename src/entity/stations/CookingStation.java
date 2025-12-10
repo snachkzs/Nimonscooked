@@ -36,19 +36,23 @@ public class CookingStation extends Station {
             try {
                 InterfaceCookable food = (InterfaceCookable) storedItem;
                 System.out.println("Kompor ON: Sedang memasak... (12s)");
+                
                 Thread.sleep(12000); 
                 
                 if (isCooking && storedItem != null) {
                     food.getCookedItem();
                     System.out.println("MAKANAN MATANG! (Segera ambil dalam 12s!)");
-                } else {return;}
+                } else {
+                    return;
+                }
+
                 Thread.sleep(12000);
                 
                 if (isCooking && storedItem != null) {
                     System.out.println("GOSONG! Makanan hangus (Burned).");
                 }
 
-            }catch(InterruptedException e){
+            } catch (InterruptedException e) {
                 System.out.println("Cooking interrupted.");
             }
         }).start();

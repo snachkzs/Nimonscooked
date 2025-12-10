@@ -8,7 +8,9 @@ public class PlateStorage extends Station {
     private Stack<Plate> plates = new Stack<>();
 
     public PlateStorage() {
-        for(int i=0; i<5; i++) plates.push(new Plate());
+        for(int i=0; i<5; i++) {
+            plates.push(new Plate());
+        }
     }
 
     public void returnDirtyPlate(Plate p) {

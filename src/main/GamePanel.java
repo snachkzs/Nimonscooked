@@ -15,16 +15,14 @@ import controller.ChefManager;
 import entity.item.Item;
 
 public class GamePanel extends JPanel implements Runnable{
-
-    //screen settings
-    final int OriginalTileSize = 16; // 16 x 16 
+    final int OriginalTileSize = 16;
     final int scale = 3;
 
-    public final int tileSize = OriginalTileSize * scale; // 48 x 48
+    public final int tileSize = OriginalTileSize * scale;
     public final int maxScreenCol = 14;
     public final int maxScreenRow = 10;
-    final int screenWidth = tileSize * maxScreenCol; //672 pixel
-    final int screenHeight = tileSize * maxScreenRow; // 480 pixel
+    final int screenWidth = tileSize * maxScreenCol;
+    final int screenHeight = tileSize * maxScreenRow; 
 
     int FPS = 60;
 
@@ -33,7 +31,7 @@ public class GamePanel extends JPanel implements Runnable{
     Thread gameThread;
     public CollisionChecker collisionChecker = new CollisionChecker(this);
     public AssetSetter assetSetter = new AssetSetter(this);
-    Chef chef = new Chef(this, keyH);
+    public Chef chef = new Chef(this, keyH, "C1", "Kebin");
     ChefView chefView = new ChefView();
     public Item itemList[] = new Item[20]; //ganti sesuai banyak item
     
@@ -46,7 +44,7 @@ public class GamePanel extends JPanel implements Runnable{
         
         this.setPreferredSize(new Dimension(screenWidth,screenHeight));
         this.setBackground(Color.black);
-        this.setDoubleBuffered(true); // better rendering
+        this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
 
