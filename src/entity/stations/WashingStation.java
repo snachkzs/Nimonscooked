@@ -8,17 +8,22 @@ public class WashingStation extends Station {
     private Stack<Plate> dirtyPlates = new Stack<>();
     private Stack<Plate> cleanPlates = new Stack<>();
 
+    public WashingStation(int x, int y, int width, int height) {
+        super(x, y, width, height);
+    }
+
     public void addDirtyPlate(Plate p) {
         dirtyPlates.push(p);
     }
 
     @Override
     public void interact(Chef chef) {
-        if (chef.inventory instanceof Plate) {
-            Plate p = (Plate) chef.inventory;
+        if (!chef.getInventory().isEmpty() && 
+            chef.getInventory().get(0) instanceof Plate) {
+            Plate p = (Plate) chef.getInventory().get(0);
             if (!p.isClean()) {
                 dirtyPlates.push(p);
-                chef.inventory = null;
+                chef.getInventory().remove(0);
                 System.out.println("Menaruh piring kotor. Total: " + dirtyPlates.size());
                 return;
             }
@@ -27,8 +32,8 @@ public class WashingStation extends Station {
             processWashing(chef);
             return;
         }
-        if (!cleanPlates.isEmpty() && chef.inventory == null) {
-            chef.inventory = cleanPlates.pop();
+        if (!cleanPlates.isEmpty() && chef.getInventory().isEmpty()) {
+            chef.getInventory().add(cleanPlates.pop());
             System.out.println("Mengambil piring bersih dari tirisan.");
         }
     }
@@ -53,5 +58,10 @@ public class WashingStation extends Station {
                 chef.setBusy(false);
             }
         }).start();
+    }
+
+    @Override
+    public String getType() {
+        return "washing_station";
     }
 }

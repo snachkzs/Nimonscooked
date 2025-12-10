@@ -1,4 +1,4 @@
-package map;
+package entity.map;
 
 import java.awt.image.BufferedImage;
 

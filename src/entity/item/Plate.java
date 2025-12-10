@@ -12,6 +12,14 @@ public class Plate extends KitchenUtensil {
         return isClean;
     }
 
+    public boolean isDirty() {
+        return !isClean;
+    }
+
+    public void setClean() {
+        this.isClean = true;
+    }
+
     public void wash() {
         this.isClean = true;
         System.out.println("Plate is now clean.");

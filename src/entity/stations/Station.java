@@ -5,6 +5,14 @@ import entity.item.Item;
 
 public abstract class Station {
     protected Item storedItem;
+    public int x, y, width, height; // Public untuk bisa diakses dari Chef
+
+    public Station(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
 
     public Item getStoredItem() {
         return storedItem;
@@ -23,6 +31,7 @@ public abstract class Station {
         this.storedItem = null;
         return item;
     }
-
+    
     public abstract void interact(Chef chef);
+    public abstract String getType();
 }

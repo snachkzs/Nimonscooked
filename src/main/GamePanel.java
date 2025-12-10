@@ -13,6 +13,7 @@ import entity.map.TileManager;
 import controller.CollisionChecker;
 import controller.ChefManager;
 import entity.item.Item;
+import entity.stations.Station;
 
 public class GamePanel extends JPanel implements Runnable{
     final int OriginalTileSize = 16;
@@ -34,6 +35,7 @@ public class GamePanel extends JPanel implements Runnable{
     public Chef chef = new Chef(this, keyH, "C1", "Kebin");
     ChefView chefView = new ChefView();
     public Item itemList[] = new Item[20]; //ganti sesuai banyak item
+    public Station stationList[] = new Station[30];
     
     public ChefManager chefManager;
 
@@ -50,6 +52,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         chefManager = new ChefManager(this, keyH);
         assetSetter.setItem();
+        assetSetter.setStation();
     }
 
     public void startGameThread(){

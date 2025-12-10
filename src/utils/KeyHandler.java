@@ -1,4 +1,4 @@
-package input;
+package utils;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -19,11 +19,11 @@ public class KeyHandler implements KeyListener{
         if(code == KeyEvent.VK_W){ upPressed = true; }
         if(code == KeyEvent.VK_S){ downPressed = true; }
         if(code == KeyEvent.VK_A){ leftPressed = true; }
-        if(code == KeyEvent.VK_D){ rightPressed = true;
-        }
+        if(code == KeyEvent.VK_D){ rightPressed = true; }
 
         if(code == KeyEvent.VK_SHIFT) {switchPressed = true;}
         if(code == KeyEvent.VK_C) {pickUpDrop = true;}
+        if(code == KeyEvent.VK_V) {chopThrow = true;}
 
     }
 
@@ -37,6 +37,7 @@ public class KeyHandler implements KeyListener{
         if(code == KeyEvent.VK_D) {rightPressed = false;}
         if(code == KeyEvent.VK_SHIFT) {switchPressed = false;}
         if(code == KeyEvent.VK_C) {pickUpDrop = false;}
+        if(code == KeyEvent.VK_V) {chopThrow = false;}
     }
     
 }

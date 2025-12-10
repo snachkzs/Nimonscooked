@@ -1,4 +1,4 @@
-package map;
+package entity.map;
 
 import main.GamePanel;
 import javax.imageio.ImageIO;
@@ -17,7 +17,7 @@ public class TileManager{
     public TileManager(GamePanel gp){
         this.gp = gp;
 
-        tile = new Tile[12];
+        tile = new Tile[16]; // Increased from 12 to 16 to support tiles 0-15
         mapTileNum = new int[gp.maxScreenCol][gp.maxScreenRow];
         getTileImage();
         loadMap("/maps/map.txt");
@@ -29,13 +29,15 @@ public class TileManager{
         // 3 = assembly
         // 4 = serving
         // 5 = wash
-        // 6 = ingridients
         // 7 = plate
         // 8 = trash
         // 9 = wall
         // 10 = floor
-        // 11 = spawn
-        // cuma placeholder buat mapnya nnt assetnya blm ada dan blm make objeknya
+        // 11 = daging storage
+        // 12 = keju storage
+        // 13 = roti storage
+        // 14 = lettuce storage
+        // 15 = tomat storage
 
         try{
             tile[0] = new Tile();
@@ -85,6 +87,22 @@ public class TileManager{
             tile[11] = new Tile();
             tile[11].image = ImageIO.read(getClass().getResourceAsStream("/tiles/floor2.png"));
             tile[11].collision = true;
+            
+            tile[12] = new Tile();
+            tile[12].image = ImageIO.read(getClass().getResourceAsStream("/tiles/floor2.png"));
+            tile[12].collision = true;
+            
+            tile[13] = new Tile();
+            tile[13].image = ImageIO.read(getClass().getResourceAsStream("/tiles/floor2.png"));
+            tile[13].collision = true;
+            
+            tile[14] = new Tile();
+            tile[14].image = ImageIO.read(getClass().getResourceAsStream("/tiles/floor2.png"));
+            tile[14].collision = true;
+            
+            tile[15] = new Tile();
+            tile[15].image = ImageIO.read(getClass().getResourceAsStream("/tiles/floor2.png"));
+            tile[15].collision = true;
 
         }
         catch(IOException e){

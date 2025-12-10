@@ -1,7 +1,7 @@
 package controller;
 
 import entity.Chef;
-import input.KeyHandler;
+import utils.KeyHandler;
 import main.GamePanel;
 
 public class ChefManager {

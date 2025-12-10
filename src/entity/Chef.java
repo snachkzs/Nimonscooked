@@ -92,7 +92,6 @@ public class Chef {
     }
 
     public void update(){
-        // Check if busy first (from feature/recipe-and-order)
         if (isBusy) {
             isMoving = false;
             if (currentTask != null && currentTask.isDone()) {
@@ -102,19 +101,25 @@ public class Chef {
             return;
         }
         
-        // Only process if active (from HEAD)
         if (isActive) {
             isMoving = false;
             
-            // Decrement cooldown
+            // cooldown pickUp/drop
             if (pickUpDropCooldown > 0) {
                 pickUpDropCooldown--;
             }
             
-            // Check item collision and handle pick up/drop
-            int itemIndex = gp.collisionChecker.checkItem(this);
+            // pick up/drop item
             if (keyH.pickUpDrop && pickUpDropCooldown == 0) {
-                pickUpDrop(itemIndex);
+                if (!interactWithNearbyStation()) {
+                    int itemIndex = gp.collisionChecker.checkItem(this);
+                    pickUpDrop(itemIndex);
+                }
+                pickUpDropCooldown = PICK_UP_DROP_DELAY;
+            }
+            
+            if (keyH.chopThrow && pickUpDropCooldown == 0) {
+                chopAtNearbyStation();
                 pickUpDropCooldown = PICK_UP_DROP_DELAY;
             }
         
@@ -183,6 +188,58 @@ public class Chef {
                 }
             }
         }
+    }
+    
+    public boolean interactWithNearbyStation() {
+        // Check all stations and find the one within interaction range
+        // Returns true if interaction happened, false if no station nearby
+        // Interaction range: adjacent tile (1 tile away in any direction)
+        int interactionRange = gp.tileSize;
+        
+        for (int i = 0; i < gp.stationList.length; i++) {
+            if (gp.stationList[i] != null) {
+                int stationX = gp.stationList[i].x;
+                int stationY = gp.stationList[i].y;
+                
+                // cek jarak station
+                int distanceX = Math.abs(this.x - stationX);
+                int distanceY = Math.abs(this.y - stationY);
+                
+                if (distanceX <= interactionRange && distanceY <= interactionRange) {
+                    System.out.println("=== [C] Interacting with " + gp.stationList[i].getType() + " ===");
+                    gp.stationList[i].interact(this);
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    public void chopAtNearbyStation() {
+        int interactionRange = gp.tileSize;
+        
+        for (int i = 0; i < gp.stationList.length; i++) {
+            if (gp.stationList[i] != null) {
+                int stationX = gp.stationList[i].x;
+                int stationY = gp.stationList[i].y;
+                
+                int distanceX = Math.abs(this.x - stationX);
+                int distanceY = Math.abs(this.y - stationY);
+                
+                if (distanceX <= interactionRange && distanceY <= interactionRange) {
+                    // cek cutting station
+                    if (gp.stationList[i].getType().equals("cutting_station")) {
+                        System.out.println("=== [V] Chopping at cutting station ===");
+                        entity.stations.CuttingStation cuttingStation = (entity.stations.CuttingStation) gp.stationList[i];
+                        cuttingStation.startCutting(this);
+                        return;
+                    }
+                }
+            }
+        }
+        
+        System.out.println("Tidak ada cutting station di sekitar");
     }
 
     public void setBusy(boolean busy) {
