@@ -13,12 +13,17 @@ public class Lettuce extends Ingredients implements InterfaceChopable, Interface
     public void use() { System.out.println("Memegang Lettuce"); }
 
     @Override
-    public void canBeChopped() {
+    public boolean isChopped() {
+        return isChopped;
     }
 
     @Override
-    public boolean isChopped() {
-        return isChopped;
+    public void setChopped(boolean chopped) {
+        this.isChopped = chopped;
+        if (chopped) {
+            this.raw = false;
+            this.name = "Lettuce potong";
+        }
     }
 
     @Override
@@ -30,7 +35,8 @@ public class Lettuce extends Ingredients implements InterfaceChopable, Interface
     }
     
     @Override
-    public void canBePlated() {
+    public boolean canBePlated() {
+        return true;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package entity.item;
 
 public interface InterfacePlatable {
-    public void canBePlated();
+    boolean canBePlated();
     boolean isPlated();
     Item getPlatedItem();
 }

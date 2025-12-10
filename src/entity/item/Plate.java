@@ -1,39 +1,100 @@
 package entity.item;
 
-public class Plate extends KitchenUtensil {    
-    private boolean isClean;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Plate extends KitchenUtensil {
+    private boolean isDirty = false;
+    private List<Item> ingredients = new ArrayList<>();
 
     public Plate() {
-        super("Plate"); 
-        this.isClean = true; 
-    }
-
-    public boolean isClean() {
-        return isClean;
-    }
-
-    public boolean isDirty() {
-        return !isClean;
-    }
-
-    public void setClean() {
-        this.isClean = true;
-    }
-
-    public void wash() {
-        this.isClean = true;
-        System.out.println("Plate is now clean.");
-    }
-
-    public void dirty() {
-        this.isClean = false;
-        this.contents.clear();
-        System.out.println("Plate is now dirty.");
+        super("Plate");
+        this.collision = false;
+        this.isDirty = false;
     }
 
     @Override
     public String getAssetPath() {
-        if (isClean) return "/assets/kitchen-utensil/plate_clean.png";
-        else return "/assets/kitchen-utensil/plate_dirty.png";
+        return isDirty ? "/items/plate_dirty.png" : "/items/plate_clean.png";
+    }
+
+    public boolean isClean() {
+        return !isDirty;
+    }
+
+    public boolean addIngredient(Item ingredient) {
+        if (isDirty) {
+            System.out.println("Tidak bisa menambahkan ingredient ke piring kotor!");
+            return false;
+        }
+        
+        // Check if ingredient is burned
+        if (ingredient instanceof InterfaceCookable) {
+            InterfaceCookable cookable = (InterfaceCookable) ingredient;
+            if (cookable.isBurned()) {
+                System.out.println(ingredient.getName() + " sudah gosong! Tidak bisa ditaruh di piring. Buang ke trash!");
+                return false;
+            }
+        }
+        
+        if (ingredient instanceof Ingredients || ingredient instanceof Dish) {
+            ingredients.add(ingredient);
+            System.out.println("Menambahkan " + ingredient.getName() + " ke piring");
+            return true;
+        }
+        
+        System.out.println("Item ini tidak bisa ditambahkan ke piring!");
+        return false;
+    }
+
+    public boolean transferFromFryingPan(FryingPan fryingPan) {
+        return fryingPan.transferToPlate(this);
+    }
+
+    public Item removeIngredient(int index) {
+        if (index >= 0 && index < ingredients.size()) {
+            return ingredients.remove(index);
+        }
+        return null;
+    }
+
+    public List<Item> getIngredients() {
+        return new ArrayList<>(ingredients);
+    }
+
+    public void clearIngredients() {
+        ingredients.clear();
+        System.out.println("Piring dibersihkan dari semua ingredients");
+    }
+
+    public boolean hasIngredients() {
+        return !ingredients.isEmpty();
+    }
+
+    public int getIngredientCount() {
+        return ingredients.size();
+    }
+
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    public void setDirty() {
+        this.isDirty = true;
+        this.ingredients.clear();
+    }
+
+    public void setClean() {
+        this.isDirty = false;
+    }
+
+    public void wash() {
+        this.isDirty = false;
+        System.out.println("Piring telah dicuci bersih");
+    }
+
+    @Override
+    public String getType() {
+        return "plate";
     }
 }

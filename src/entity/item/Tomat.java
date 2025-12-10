@@ -13,12 +13,17 @@ public class Tomat extends Ingredients implements InterfaceChopable, InterfacePl
     public void use() { System.out.println("Memegang Tomat"); }
 
     @Override
-    public void canBeChopped() {
+    public boolean isChopped() {
+        return isChopped;
     }
 
     @Override
-    public boolean isChopped() {
-        return isChopped;
+    public void setChopped(boolean chopped) {
+        this.isChopped = chopped;
+        if (chopped) {
+            this.raw = false;
+            this.name = "Tomat potong";
+        }
     }
 
     @Override
@@ -30,7 +35,8 @@ public class Tomat extends Ingredients implements InterfaceChopable, InterfacePl
     }
     
     @Override
-    public void canBePlated() {
+    public boolean canBePlated() {
+        return true;
     }
 
     @Override

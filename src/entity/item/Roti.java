@@ -13,7 +13,8 @@ public class Roti extends Ingredients implements InterfacePlatable {
     }
 
     @Override
-    public void canBePlated() {
+    public boolean canBePlated() {
+        return true;
     }
 
     @Override

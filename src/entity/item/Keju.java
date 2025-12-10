@@ -19,12 +19,17 @@ public class Keju extends Ingredients implements InterfaceChopable, InterfacePla
     public void use() { System.out.println("Memegang Keju"); }
 
     @Override
-    public void canBeChopped() {
+    public boolean isChopped() {
+        return isChopped;
     }
 
     @Override
-    public boolean isChopped() {
-        return isChopped;
+    public void setChopped(boolean chopped) {
+        this.isChopped = chopped;
+        if (chopped) {
+            this.raw = false;
+            this.name = "Keju Iris";
+        }
     }
 
     @Override
@@ -36,7 +41,8 @@ public class Keju extends Ingredients implements InterfaceChopable, InterfacePla
     }
     
     @Override
-    public void canBePlated() {
+    public boolean canBePlated() {
+        return true;
     }
 
     @Override

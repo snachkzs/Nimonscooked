@@ -1,7 +1,11 @@
 package entity.item;
 
 public interface InterfaceCookable {
-    public void canBeCooked();
+    void setCookingTime(int time);
+    int getCookingTime();
     boolean isCooked();
-    Item getCookedItem();
+    void setCooked(boolean cooked);
+    boolean isBurned();
+    void setBurned(boolean burned);
+    void cook();
 }

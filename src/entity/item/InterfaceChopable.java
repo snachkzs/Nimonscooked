@@ -1,7 +1,7 @@
 package entity.item;
 
 public interface InterfaceChopable {
-    public void canBeChopped();
     boolean isChopped();
+    void setChopped(boolean chopped);
     Item getChoppedItem();
 }
