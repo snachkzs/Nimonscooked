@@ -22,8 +22,8 @@ public class KeyHandler implements KeyListener{
         if(code == KeyEvent.VK_D){ rightPressed = true; }
 
         if(code == KeyEvent.VK_SHIFT) {switchPressed = true;}
-        if(code == KeyEvent.VK_C) {pickUpDrop = true;}
-        if(code == KeyEvent.VK_V) {chopThrow = true;}
+        if(code == KeyEvent.VK_SLASH) {pickUpDrop = true;}
+        if(code == KeyEvent.VK_PERIOD) {chopThrow = true;}
 
     }
 
@@ -36,8 +36,8 @@ public class KeyHandler implements KeyListener{
         if(code == KeyEvent.VK_A) {leftPressed = false;}
         if(code == KeyEvent.VK_D) {rightPressed = false;}
         if(code == KeyEvent.VK_SHIFT) {switchPressed = false;}
-        if(code == KeyEvent.VK_C) {pickUpDrop = false;}
-        if(code == KeyEvent.VK_V) {chopThrow = false;}
+        if(code == KeyEvent.VK_SLASH) {pickUpDrop = false;}
+        if(code == KeyEvent.VK_PERIOD) {chopThrow = false;}
     }
     
 }
