@@ -5,11 +5,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import input.KeyHandler;
+import utils.KeyHandler;
 import entity.Chef;
 import view.ChefView;
 import entity.item.Daging;
-import map.TileManager;
+import entity.map.TileManager;
 import controller.CollisionChecker;
 import controller.ChefManager;
 import entity.item.Item;
@@ -111,17 +111,17 @@ public class GamePanel extends JPanel implements Runnable{
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
 
-        // Draw tiles
+        // gambar tiles
         tileM.draw(g2);
         
-        // Draw items
+        // gambar item
         for (int i = 0; i < itemList.length; i++) {
             if (itemList[i] != null) {
                 itemList[i].draw(g2, this);
             }
         }
 
-        // Draw both chefs
+        // gambar kedua chef
         chefView.render(g2, chefManager.getChef1(), tileSize);
         chefView.render(g2, chefManager.getChef2(), tileSize);
         
