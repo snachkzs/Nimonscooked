@@ -11,6 +11,8 @@ public class OrderManagement {
     private List<Recipe> availableRecipes;
     private int orderCounter = 0;
     private int score = 0;
+    private int frameCounter = 0;
+    private static final int FPS = 60;
 
     public OrderManagement() {
         this.activeOrders = new ArrayList<>();
@@ -51,6 +53,8 @@ public class OrderManagement {
                 System.out.println("Order " + order.getRecipe().getName() + " SELESAI! (+" + order.getReward() + " pts)");
                 score += order.getReward();
                 activeOrders.remove(order);
+                
+                generateNewOrder();
                 return true;
             }
         }
@@ -61,16 +65,32 @@ public class OrderManagement {
     }
 
     public void update() {
-        for (int i = 0; i < activeOrders.size(); i++) {
-            Order o = activeOrders.get(i);
-            o.decreaseTime();
+        frameCounter++;
+        
+        if (frameCounter >= FPS) {
+            frameCounter = 0;
             
-            if (o.isExpired()) {
-                System.out.println("Order " + o.getRecipe().getName() + " EXPIRED! (-" + o.getPenalty() + " pts)");
-                score -= o.getPenalty();
-                activeOrders.remove(i);
-                i--;
+            for (int i = 0; i < activeOrders.size(); i++) {
+                Order o = activeOrders.get(i);
+                o.decreaseTime();
+                
+                if (o.isExpired()) {
+                    System.out.println("Order " + o.getRecipe().getName() + " EXPIRED! (-" + o.getPenalty() + " pts)");
+                    score -= o.getPenalty();
+                    activeOrders.remove(i);
+                    i--;
+                    
+                    generateNewOrder();
+                }
             }
         }
+    }
+
+    public List<Order> getActiveOrders() {
+        return activeOrders;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

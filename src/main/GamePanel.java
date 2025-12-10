@@ -14,16 +14,23 @@ import controller.CollisionChecker;
 import controller.ChefManager;
 import entity.item.Item;
 import entity.stations.Station;
+import entity.order.OrderManagement;
 
 public class GamePanel extends JPanel implements Runnable{
+
+    //screen settings
     final int OriginalTileSize = 16;
     final int scale = 3;
 
-    public final int tileSize = OriginalTileSize * scale;
+    public final int tileSize = OriginalTileSize * scale; // 48 x 48 
     public final int maxScreenCol = 14;
     public final int maxScreenRow = 10;
-    final int screenWidth = tileSize * maxScreenCol;
-    final int screenHeight = tileSize * maxScreenRow; 
+    
+    // Render scale
+    public final double renderScale = 1.3; // 130%
+    
+    final int screenWidth = (int)(tileSize * maxScreenCol * renderScale); // diperbesar untuk rendering
+    final int screenHeight = (int)(tileSize * maxScreenRow * renderScale); // diperbesar untuk rendering
 
     int FPS = 60;
 
@@ -32,13 +39,12 @@ public class GamePanel extends JPanel implements Runnable{
     Thread gameThread;
     public CollisionChecker collisionChecker = new CollisionChecker(this);
     public AssetSetter assetSetter = new AssetSetter(this);
-    public Chef chef = new Chef(this, keyH, "C1", "Kebin");
     ChefView chefView = new ChefView();
-    public Item itemList[] = new Item[20]; //ganti sesuai banyak item
-    public Station stationList[] = new Station[30];
+    public Item itemList[] = new Item[30]; 
+    public Station stationList[] = new Station[30]; //ga mood ngitung ada berapa station acc
     
     public ChefManager chefManager;
-
+    public OrderManagement orderManager;
 
     private boolean switchKeyPressed = false;
 
@@ -46,13 +52,17 @@ public class GamePanel extends JPanel implements Runnable{
         
         this.setPreferredSize(new Dimension(screenWidth,screenHeight));
         this.setBackground(Color.black);
-        this.setDoubleBuffered(true);
+        this.setDoubleBuffered(true); // better rendering
         this.addKeyListener(keyH);
         this.setFocusable(true);
 
         chefManager = new ChefManager(this, keyH);
-        assetSetter.setItem();
+        orderManager = new OrderManagement();
         assetSetter.setStation();
+        
+        // Generate initial orders
+        orderManager.generateNewOrder();
+        orderManager.generateNewOrder();
     }
 
     public void startGameThread(){
@@ -97,20 +107,21 @@ public class GamePanel extends JPanel implements Runnable{
         if (!keyH.switchPressed) {
             switchKeyPressed = false;
         }
+        
+        orderManager.update();
 
-        chefManager.update();
-
-    }
-
-    public void setUpGame(){
-
-        assetSetter.setItem();
-
+        for (int i = 0; i < stationList.length; i++) {
+            if (stationList[i] != null) {
+                stationList[i].update();
+            }
+        }
     }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
+
+        g2.scale(renderScale, renderScale);
 
         // gambar tiles
         tileM.draw(g2);
@@ -125,7 +136,6 @@ public class GamePanel extends JPanel implements Runnable{
         // gambar kedua chef
         chefView.render(g2, chefManager.getChef1(), tileSize);
         chefView.render(g2, chefManager.getChef2(), tileSize);
-        
         
         g2.dispose();
     }
