@@ -12,16 +12,16 @@ public class AssetSetter {
         this.gp = gp;
     }
 
-    public void setItem(){
-        gp.itemList[0] = new Daging();
-        gp.itemList[0].setPosition(200, 200);
+    // public void setItem(){
+    //     gp.itemList[0] = new Daging();
+    //     gp.itemList[0].setPosition(200, 200);
 
-        gp.itemList[1] = new Daging();
-        gp.itemList[1].setPosition(300, 250);
+    //     gp.itemList[1] = new Daging();
+    //     gp.itemList[1].setPosition(300, 250);
 
-        gp.itemList[2] = new Keju();
-        gp.itemList[2].setPosition(400, 300);
-    }
+    //     gp.itemList[2] = new Keju();
+    //     gp.itemList[2].setPosition(400, 300);
+    // }
 
     public void setStation(){
         int stationIndex = 0;

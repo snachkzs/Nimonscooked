@@ -1,11 +1,11 @@
-package entity;
+package entity.item;
 
 public class FryingPan extends KitchenUtensil implements CookingDevice {
 
     private int capacity;
 
     public FryingPan() {
-        super();
+        super("Frying Pan");
         this.capacity = 1;
     }
 

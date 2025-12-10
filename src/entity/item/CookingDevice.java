@@ -1,4 +1,4 @@
-package entity;
+package entity.item;
 
 public interface CookingDevice {    
     // mengecek apakah bisa di dibawa-bawa atau diam

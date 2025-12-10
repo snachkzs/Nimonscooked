@@ -1,12 +1,11 @@
 package entity.item;
 
-import entity.item.Item; 
-import entity.item.Preparable;
 import java.util.List;
 import java.util.ArrayList;
 
 public abstract class KitchenUtensil extends Item {
     protected List<Preparable> contents;
+    protected boolean inUse = false;
 
     public KitchenUtensil(String name) {
         this.name = name; 
@@ -19,6 +18,14 @@ public abstract class KitchenUtensil extends Item {
 
     public void addIngredient(Preparable ingredient) {
         this.contents.add(ingredient);
+    }
+
+    public boolean isInUse() {
+        return inUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        this.inUse = inUse;
     }
 
     public abstract String getAssetPath();
