@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public abstract class KitchenUtensil extends Item {
-    protected List<Preparable> contents;
+    protected List<Item> contents;
     protected boolean inUse = false;
 
     public KitchenUtensil(String name) {
@@ -12,12 +12,13 @@ public abstract class KitchenUtensil extends Item {
         this.contents = new ArrayList<>();
     }
 
-    public List<Preparable> getContents() {
+    public List<Item> getContents() {
         return this.contents;
     }
 
-    public void addIngredient(Preparable ingredient) {
+    public boolean addIngredient(Item ingredient) {
         this.contents.add(ingredient);
+        return true;
     }
 
     public boolean isInUse() {

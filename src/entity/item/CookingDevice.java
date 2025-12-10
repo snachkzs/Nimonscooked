@@ -8,10 +8,10 @@ public interface CookingDevice {
     int capacity();
     
     // mengecek apakah alat masak bisa menerima bahan tertentu
-    boolean canAccept(Preparable ingredient);
+    boolean canAccept(Item ingredient);
     
     // menambahkan bahan ke dalam alat
-    void addIngredient(Preparable ingredient);
+    boolean addIngredient(Item ingredient);
     
     // memulai proses memasak
     void startCooking();
