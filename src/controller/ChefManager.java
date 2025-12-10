@@ -16,14 +16,17 @@ public class ChefManager {
 
         chef1 = new Chef(gp, keyH, 96, 96);
         chef2 = new Chef(gp, keyH, 528, 288);
-
+        
         activeChef = chef1;
         chef1.setActive(true);
         chef2.setActive(false);
+        
+        chef1.startThread();
+        chef2.startThread();
+        
     }
 
     public void swapChef() {
-
         activeChef.setActive(false);
 
         if (activeChefIndex == 0) {
@@ -35,11 +38,22 @@ public class ChefManager {
         }
 
         activeChef.setActive(true);
+        System.out.println("Swapped to " + activeChef.getName());
     }
 
-    public void update() {
-        chef1.update();
-        chef2.update();
+    public void pauseAll() {
+        chef1.pause();
+        chef2.pause();
+    }
+    
+    public void resumeAll() {
+        chef1.resume();
+        chef2.resume();
+    }
+
+    public void stopAll() {
+        chef1.stopThread();
+        chef2.stopThread();
     }
 
     public Chef getChef1() {
