@@ -9,8 +9,6 @@ import java.awt.Color;
 public class ChefView {
 
     private BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
-    private int spriteCounter = 0;
-    private int spriteNum = 1;
 
     public ChefView(){
         loadSprites();
@@ -32,18 +30,7 @@ public class ChefView {
     }
     
     public void render(Graphics2D g2, Chef chef, int tileSize){
-        if (chef.isMoving()) {
-            spriteCounter++;
-            if (spriteCounter > 12){
-                spriteNum = (spriteNum == 1) ? 2 : 1;
-                spriteCounter = 0;
-            }
-        } else {
-            spriteNum = 1;
-            spriteCounter = 0;
-        }
-        
-        BufferedImage image = getSprite(chef.getDirection(), spriteNum);
+        BufferedImage image = getSprite(chef.getDirection(), chef.getSpriteNum());
         g2.drawImage(image, chef.getX(), chef.getY(), tileSize, tileSize, null);
 
         if (chef.isActive()) {

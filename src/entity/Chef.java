@@ -35,6 +35,10 @@ public class Chef {
     
     private int pickUpDropCooldown = 0;
     private final int PICK_UP_DROP_DELAY = 15;
+    
+    // Sprite animation
+    private int spriteCounter = 0;
+    private int spriteNum = 1;
 
     public Chef(GamePanel gp, KeyHandler keyH, String id, String name){
         this.gp = gp;
@@ -102,8 +106,6 @@ public class Chef {
         }
         
         if (isActive) {
-            isMoving = false;
-            
             // cooldown pickUp/drop
             if (pickUpDropCooldown > 0) {
                 pickUpDropCooldown--;
@@ -156,10 +158,25 @@ public class Chef {
                             x += speed;
                             break;
                     }
+                    }
                 }
+            } else {
+                isMoving = false;
+            }
+            
+            // Update sprite animation
+            if (isMoving) {
+                spriteCounter++;
+                if (spriteCounter > 12) {
+                    spriteNum = (spriteNum == 1) ? 2 : 1;
+                    spriteCounter = 0;
+                }
+            } else {
+                spriteNum = 1;
+                spriteCounter = 0;
             }
         }
-    }
+    
 
     public void pickUpDrop(int i){
         if (i != 999){
@@ -191,9 +208,6 @@ public class Chef {
     }
     
     public boolean interactWithNearbyStation() {
-        // Check all stations and find the one within interaction range
-        // Returns true if interaction happened, false if no station nearby
-        // Interaction range: adjacent tile (1 tile away in any direction)
         int interactionRange = gp.tileSize;
         
         for (int i = 0; i < gp.stationList.length; i++) {
@@ -284,6 +298,10 @@ public class Chef {
     
     public boolean isMoving() {
         return isMoving;
+    }
+    
+    public int getSpriteNum() {
+        return spriteNum;
     }
     
     public ArrayList<Item> getInventory() {
