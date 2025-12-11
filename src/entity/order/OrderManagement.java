@@ -1,6 +1,7 @@
 package entity.order;
 
 import entity.item.Item;
+import main.GamePanel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,11 +11,12 @@ public class OrderManagement {
     private List<Order> activeOrders;
     private List<Recipe> availableRecipes;
     private int orderCounter = 0;
-    private int score = 0;
     private int frameCounter = 0;
     private static final int FPS = 60;
+    private GamePanel gp;
 
-    public OrderManagement() {
+    public OrderManagement(GamePanel gp) {
+        this.gp = gp;
         this.activeOrders = new ArrayList<>();
         this.availableRecipes = new ArrayList<>();
         initializeRecipes();
@@ -41,17 +43,18 @@ public class OrderManagement {
         Recipe r = availableRecipes.get(rand.nextInt(availableRecipes.size()));
         
         orderCounter++;
-        Order newOrder = new Order(orderCounter, r, 60, 100, 50); 
+        Order newOrder = new Order(orderCounter, r, 40, 100, 50); // 40 seconds per order
         
         activeOrders.add(newOrder);
-        System.out.println("NEW ORDER: " + r.getName() + " (Time: 60s)");
+        System.out.println("NEW ORDER: " + r.getName() + " (Time: 40s)");
     }
 
     public boolean processDelivery(List<Item> plateContents) {
         for (Order order : activeOrders) {
             if (order.getRecipe().validate(plateContents)) {
-                System.out.println("Order " + order.getRecipe().getName() + " SELESAI! (+" + order.getReward() + " pts)");
-                score += order.getReward();
+                System.out.println("Order " + order.getRecipe().getName() + " SELESAI! (+" + gp.SCORE_PER_ORDER + " pts)");
+                gp.currentScore += gp.SCORE_PER_ORDER;
+                gp.consecutiveFailedOrders = 0; // Reset failed counter on success
                 activeOrders.remove(order);
                 
                 generateNewOrder();
@@ -59,8 +62,9 @@ public class OrderManagement {
             }
         }
 
-        System.out.println("Order SALAH! (-50 pts)");
-        score -= 50;
+        System.out.println("Order SALAH! (-10 pts)");
+        gp.currentScore -= 10;
+        gp.consecutiveFailedOrders++;
         return false;
     }
 
@@ -76,7 +80,8 @@ public class OrderManagement {
                 
                 if (o.isExpired()) {
                     System.out.println("Order " + o.getRecipe().getName() + " EXPIRED! (-" + o.getPenalty() + " pts)");
-                    score -= o.getPenalty();
+                    gp.currentScore -= o.getPenalty();
+                    gp.consecutiveFailedOrders++; // Count as failed order
                     activeOrders.remove(i);
                     i--;
                     
@@ -88,9 +93,5 @@ public class OrderManagement {
 
     public List<Order> getActiveOrders() {
         return activeOrders;
-    }
-
-    public int getScore() {
-        return score;
     }
 }
