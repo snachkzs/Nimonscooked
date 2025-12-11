@@ -14,8 +14,13 @@ public class ChefManager {
     public ChefManager(GamePanel gp, KeyHandler keyH) {
         this.gp = gp;
 
-        chef1 = new Chef(gp, keyH, 96, 96);
-        chef2 = new Chef(gp, keyH, 528, 288);
+        chef1 = new Chef(gp, keyH, "C1", "Kebin");
+        chef1.setX(288);
+        chef1.setY(96);
+        
+        chef2 = new Chef(gp, keyH, "C2", "Stewart");
+        chef2.setX(384);
+        chef2.setY(240);
         
         activeChef = chef1;
         chef1.setActive(true);
@@ -23,7 +28,6 @@ public class ChefManager {
         
         chef1.startThread();
         chef2.startThread();
-        
     }
 
     public void swapChef() {
