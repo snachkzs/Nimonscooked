@@ -43,7 +43,7 @@ public class OrderManagement {
         Recipe r = availableRecipes.get(rand.nextInt(availableRecipes.size()));
         
         orderCounter++;
-        Order newOrder = new Order(orderCounter, r, 60, 100, 15); // 60 seconds per order
+        Order newOrder = new Order(orderCounter, r, 100, 100, 15); // 60 seconds per order
         
         activeOrders.add(newOrder);
         System.out.println("NEW ORDER: " + r.getName() + " (Time: 40s)");

@@ -6,10 +6,9 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import utils.KeyHandler;
+import entity.Chef;
 import view.ChefView;
 import view.StationView;
-import entity.Chef;
-import entity.item.Daging;
 import entity.map.TileManager;
 import controller.CollisionChecker;
 import controller.ChefManager;
@@ -18,6 +17,7 @@ import entity.stations.Station;
 import entity.order.OrderManagement;
 import view.GameStateView;
 import view.InventoryView;
+import view.OrderView;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -46,6 +46,7 @@ public class GamePanel extends JPanel implements Runnable{
     public StationView stationView;
     GameStateView gameStateView = new GameStateView();
     InventoryView inventoryView = new InventoryView();
+    OrderView orderView = new OrderView();
     public Item itemList[] = new Item[30]; 
     public Station stationList[] = new Station[100];
     
@@ -99,7 +100,6 @@ public class GamePanel extends JPanel implements Runnable{
 
         chefManager = new ChefManager(this, keyH);
         orderManager = new OrderManagement(this);
-        
         stationView = new StationView();
     }
 
@@ -110,13 +110,13 @@ public class GamePanel extends JPanel implements Runnable{
     }
     
     public void startGame() {
-        stageTimeRemaining = 180; // 3 minutes
+        stageTimeRemaining = 180; // game time
         timerFrameCounter = 0;
         currentScore = 0;
         consecutiveFailedOrders = 0;
         stagePassed = false;
         
-        // Reset chefs
+        // Reset 
         chefManager.resetChefs();
         
         // Clear and regenerate items and stations
@@ -220,23 +220,33 @@ public class GamePanel extends JPanel implements Runnable{
         }
         
         if (gameState == playState || gameState == pauseState) {
-            // gambar tiles (Lantai/Background)
             tileM.draw(g2);
             
+            // gambar stations
             for (int i = 0; i < stationList.length; i++) {
                 if (stationList[i] != null) {
                     stationView.render(g2, stationList[i], tileSize);
                 }
             }
             
-            // gambar item (Layer Atas)
+            // gambar items di atas station
+            for (int i = 0; i < stationList.length; i++) {
+                if (stationList[i] != null && stationList[i].hasItem()) {
+                    Item itemOnStation = stationList[i].getStoredItem();
+                    if (itemOnStation != null) {
+                        itemOnStation.draw(g2, this);
+                    }
+                }
+            }
+            
+            // gambar item 
             for (int i = 0; i < itemList.length; i++) {
                 if (itemList[i] != null) {
                     itemList[i].draw(g2, this);
                 }
             }
 
-            // gambar kedua chef (Layer Paling Atas)
+            // gambar kedua chef
             chefView.render(g2, chefManager.getChef1(), tileSize);
             chefView.render(g2, chefManager.getChef2(), tileSize);
             
@@ -247,11 +257,16 @@ public class GamePanel extends JPanel implements Runnable{
             if (gameState == playState) {
                 renderTimerAndScore(g2);
                 
-                // Render inventory for active chef
+                // gambar inventory
                 Chef activeChef = chefManager.getActiveChef();
                 if (activeChef != null) {
                     inventoryView.render(g2, activeChef, (int)(screenWidth/renderScale), (int)(screenHeight/renderScale));
                 }
+            }
+            
+            // gambar order
+            if (gameState == playState) {
+                orderView.render(g2, orderManager.getActiveOrders(), (int)(screenWidth/renderScale), (int)(screenHeight/renderScale));
             }
         }
 
@@ -294,3 +309,4 @@ public class GamePanel extends JPanel implements Runnable{
     }
     
 }
+
