@@ -24,7 +24,7 @@ public class PlateStorage extends Station {
         }
         
         if (plates.isEmpty()) {
-            System.out.println("❌ Piring habis! Tunggu piring kotor kembali dari serving.");
+            System.out.println("Piring habis! Tunggu piring kotor kembali dari serving.");
             return;
         }
         
@@ -32,15 +32,15 @@ public class PlateStorage extends Station {
         chef.getInventory().add(plate);
         
         if (plate.isClean()) {
-            System.out.println("✅ Mengambil piring bersih ✨ (" + plates.size() + " tersisa)");
+            System.out.println("Mengambil piring bersih (" + plates.size() + " tersisa)");
         } else {
-            System.out.println("🧼 Mengambil piring kotor (cuci di Washing Station dulu!) (" + plates.size() + " tersisa)");
+            System.out.println("Mengambil piring kotor (" + plates.size() + " tersisa)");
         }
     }
     
     public void addDirtyPlate(Plate plate) {
-        plates.add(0, plate); // Add to BOTTOM of stack (index 0)
-        System.out.println("🍽️  Piring kotor ditambahkan ke BOTTOM stack (" + plates.size() + " total plates)");
+        plates.add(0, plate);
+        System.out.println("Piring kotor ditambahkan ke bottom stack (" + plates.size() + " total plates)");
     }
 
     @Override

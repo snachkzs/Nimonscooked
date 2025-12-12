@@ -39,10 +39,6 @@ public abstract class Station {
         return item;
     }
     
-    /**
-     * Try to acquire lock for station interaction
-     * Returns true if lock acquired, false if another chef is using
-     */
     public boolean tryLock(Chef chef) {
         if (lock.tryLock()) {
             interactingChef = chef;
@@ -50,20 +46,14 @@ public abstract class Station {
         }
         return false;
     }
-    
-    /**
-     * Release lock after interaction complete
-     */
+
     public void unlock(Chef chef) {
         if (interactingChef == chef) {
             interactingChef = null;
             lock.unlock();
         }
     }
-    
-    /**
-     * Check if station is being used by another chef
-     */
+
     public boolean isOccupied() {
         return lock.isLocked();
     }

@@ -16,6 +16,7 @@ import entity.item.Item;
 import entity.stations.Station;
 import entity.order.OrderManagement;
 import view.GameStateView;
+import view.InventoryView;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -43,6 +44,7 @@ public class GamePanel extends JPanel implements Runnable{
     ChefView chefView = new ChefView();
     public StationView stationView;
     GameStateView gameStateView = new GameStateView();
+    InventoryView inventoryView = new InventoryView();
     public Item itemList[] = new Item[30]; 
     public Station stationList[] = new Station[100];
     
@@ -113,8 +115,23 @@ public class GamePanel extends JPanel implements Runnable{
         consecutiveFailedOrders = 0;
         stagePassed = false;
         
+        // Reset chefs
+        chefManager.resetChefs();
+        
+        // Clear and regenerate items and stations
+        for (int i = 0; i < itemList.length; i++) {
+            itemList[i] = null;
+        }
+        for (int i = 0; i < stationList.length; i++) {
+            stationList[i] = null;
+        }
+        assetSetter.setStation();
+        
+        // Reset orders
+        orderManager.reset();
         orderManager.generateNewOrder();
         orderManager.generateNewOrder();
+        
         gameState = playState;
     }
 
@@ -228,6 +245,12 @@ public class GamePanel extends JPanel implements Runnable{
             
             if (gameState == playState) {
                 renderTimerAndScore(g2);
+                
+                // Render inventory for active chef
+                Chef activeChef = chefManager.getActiveChef();
+                if (activeChef != null) {
+                    inventoryView.render(g2, activeChef, (int)(screenWidth/renderScale), (int)(screenHeight/renderScale));
+                }
             }
         }
 
@@ -252,13 +275,12 @@ public class GamePanel extends JPanel implements Runnable{
         String scoreText = "Score: " + currentScore;
         g2.drawString(scoreText, 10, baseScreenHeight - 10);
         
-        // Render timer (bottom right)
         int minutes = stageTimeRemaining / 60;
         int seconds = stageTimeRemaining % 60;
         String timerText = String.format("Time: %d:%02d", minutes, seconds);
         int timerWidth = g2.getFontMetrics().stringWidth(timerText);
         
-        // Change color if time is running out
+        // ganti warna timer
         if (stageTimeRemaining <= 30) {
             g2.setColor(new Color(255, 0, 0)); // Red
         } else if (stageTimeRemaining <= 60) {

@@ -1,5 +1,7 @@
 package entity.item;
 
+import java.io.IOException;
+
 public class Keju extends Ingredients implements InterfaceChopable, InterfacePlatable {
     
     private boolean isChopped = false;
@@ -7,13 +9,20 @@ public class Keju extends Ingredients implements InterfaceChopable, InterfacePla
     public Keju() {
         this.name = "Keju";
         this.raw = true;
-
-        try{
-            image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/keju.jpg"));
-        } catch(java.io.IOException e){
-            e.printStackTrace();
-        }
+        loadImage();
     }
+
+    private void loadImage() {
+        try {
+            if (isChopped) {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/keju_potong.png"));
+            } else {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/keju.png"));
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading keju image: " + e.getMessage());
+        }
+    }  
 
     @Override
     public void use() { System.out.println("Memegang Keju"); }
@@ -29,6 +38,7 @@ public class Keju extends Ingredients implements InterfaceChopable, InterfacePla
         if (chopped) {
             this.raw = false;
             this.name = "Keju Iris";
+            loadImage();
         }
     }
 
@@ -37,6 +47,7 @@ public class Keju extends Ingredients implements InterfaceChopable, InterfacePla
         this.isChopped = true;
         this.raw = false;
         this.name = "Keju Iris";
+        loadImage();
         return this;
     }
     

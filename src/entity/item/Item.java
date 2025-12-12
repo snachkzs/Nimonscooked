@@ -29,6 +29,10 @@ public abstract class Item {
     public String getName() {
         return name;
     }
+    
+    public BufferedImage getImage() {
+        return image;
+    }
 
     public int getX() {
         return x;

@@ -1,5 +1,7 @@
 package entity.item;
 
+import java.io.IOException;
+
 public class Lettuce extends Ingredients implements InterfaceChopable, InterfacePlatable {
     
     private boolean isChopped = false;
@@ -7,7 +9,20 @@ public class Lettuce extends Ingredients implements InterfaceChopable, Interface
     public Lettuce() {
         this.name = "Lettuce";
         this.raw = true;
+        loadImage();
     }
+
+    private void loadImage() {
+        try {
+            if (isChopped) {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/lettuce_potong.png"));
+            } else {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/lettuce.png"));
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading lettuce image: " + e.getMessage());
+        }
+    }  
 
     @Override
     public void use() { System.out.println("Memegang Lettuce"); }
@@ -23,6 +38,7 @@ public class Lettuce extends Ingredients implements InterfaceChopable, Interface
         if (chopped) {
             this.raw = false;
             this.name = "Lettuce potong";
+            loadImage();
         }
     }
 
@@ -31,6 +47,7 @@ public class Lettuce extends Ingredients implements InterfaceChopable, Interface
         this.isChopped = true;
         this.raw = false;
         this.name = "Lettuce potong";
+        loadImage();
         return this;
     }
     

@@ -1,5 +1,7 @@
 package entity.item;
 
+import java.io.IOException;
+
 public class Tomat extends Ingredients implements InterfaceChopable, InterfacePlatable {
     
     private boolean isChopped = false;
@@ -7,7 +9,20 @@ public class Tomat extends Ingredients implements InterfaceChopable, InterfacePl
     public Tomat() {
         this.name = "Tomat";
         this.raw = true;
+        loadImage();
     }
+
+    private void loadImage() {
+        try {
+            if (isChopped) {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/tomat_potong.png"));
+            } else {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/tomat.png"));
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading tomat image: " + e.getMessage());
+        }
+    }  
 
     @Override
     public void use() { System.out.println("Memegang Tomat"); }
@@ -23,6 +38,7 @@ public class Tomat extends Ingredients implements InterfaceChopable, InterfacePl
         if (chopped) {
             this.raw = false;
             this.name = "Tomat potong";
+            loadImage();
         }
     }
 
@@ -31,6 +47,7 @@ public class Tomat extends Ingredients implements InterfaceChopable, InterfacePl
         this.isChopped = true;
         this.raw = false;
         this.name = "Tomat potong";
+        loadImage();
         return this;
     }
     

@@ -1,16 +1,68 @@
 package entity.item;
 
+import java.io.IOException;
+
 public class FryingPan extends KitchenUtensil implements CookingDevice {
 
     private int capacity;
     private boolean isCooking = false;
     private int cookingProgress = 0;
-    private final int COOKING_TIME = 720; // 12 seconds at 60 FPS
+    private final int COOKING_TIME = 720; // 12 seconds 
 
     public FryingPan() {
         super("Frying Pan");
         this.capacity = 1;
         this.collision = true;
+        loadImage();
+    }
+
+    private void loadImage() {
+        try {
+            String imagePath = null;
+            
+            if (contents == null || contents.isEmpty()) {
+
+                imagePath = "/kitchen-utensil/frying_pan.png";
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream(imagePath));
+                
+                if (image == null) {
+                    imagePath = "/items/frying_pan.png";
+                    image = javax.imageio.ImageIO.read(getClass().getResourceAsStream(imagePath));
+                }
+            } else {
+                Item ingredient = contents.get(0);
+                if (ingredient instanceof InterfaceCookable) {
+                    InterfaceCookable cookable = (InterfaceCookable) ingredient;
+                    
+                    if (cookable.isBurned()) {
+                        imagePath = "/kitchen-utensil/frying_pan_cooked_meat.png";
+                        image = javax.imageio.ImageIO.read(getClass().getResourceAsStream(imagePath));
+                    } else if (cookable.isCooked()) {
+                        // Cooked meat in pan
+                        imagePath = "/kitchen-utensil/frying_pan_cooked_meat.png";
+                        image = javax.imageio.ImageIO.read(getClass().getResourceAsStream(imagePath));
+                    } else {
+                        // Raw meat in pan
+                        imagePath = "/kitchen-utensil/frying_pan_meat.png";
+                        image = javax.imageio.ImageIO.read(getClass().getResourceAsStream(imagePath));
+                    }
+                    
+                } else {
+                    // Default empty
+                    imagePath = "/kitchen-utensil/frying_pan.png";
+                    image = javax.imageio.ImageIO.read(getClass().getResourceAsStream(imagePath));
+                }
+            }
+            
+            // Final fallback
+            if (image == null) {
+                imagePath = "/items/frying_pan.png";
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream(imagePath));
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error loading frying pan image: " + e.getMessage());
+        }
     }
 
     @Override
@@ -50,6 +102,7 @@ public class FryingPan extends KitchenUtensil implements CookingDevice {
         
         this.contents.add(ingredient);
         System.out.println("Menambahkan " + ingredient.getName() + " ke Frying Pan");
+        loadImage();
         return true;
     }
 
@@ -74,11 +127,13 @@ public class FryingPan extends KitchenUtensil implements CookingDevice {
                     // Selesai masak
                     cookable.setCooked(true);
                     isCooking = false;
+                    loadImage();
                     System.out.println(ingredient.getName() + " sudah matang!");
                 } else if (cookingProgress >= COOKING_TIME * 2 && !cookable.isBurned()) {
                     // BURNED
                     cookable.setBurned(true);
                     isCooking = false;
+                    loadImage();
                     System.out.println(ingredient.getName() + " GOSONG!");
 
                 }
@@ -109,6 +164,7 @@ public class FryingPan extends KitchenUtensil implements CookingDevice {
                     System.out.println("Memindahkan " + item.getName() + " dari Frying Pan ke Plate");
                     cookingProgress = 0;
                     isCooking = false;
+                    loadImage();
                     return true;
                 } else {
                     contents.add(0, ingredient);
@@ -155,6 +211,7 @@ public class FryingPan extends KitchenUtensil implements CookingDevice {
         contents.clear();
         isCooking = false;
         cookingProgress = 0;
+        loadImage();
     }
 
     @Override
