@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import utils.KeyHandler;
 import view.ChefView;
 import view.StationView;
+import entity.Chef;
 import entity.item.Daging;
 import entity.map.TileManager;
 import controller.CollisionChecker;

@@ -6,8 +6,6 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 public class StationView {
-
-    // --- Images ---
     // Assembly
     private BufferedImage assemblyStation, assemblyStationLR;
     // Cooking
@@ -23,7 +21,7 @@ public class StationView {
     // Trash
     private BufferedImage trashStation;
     // Washing
-    private BufferedImage washingStation, washingStationDown; // Asumsi: washingStation = UP/Default
+    private BufferedImage washingStation, washingStationDown;
     // Default fallback
     private BufferedImage mejaAja;
 
@@ -33,8 +31,6 @@ public class StationView {
 
     private void loadSprites() {
         try {
-            // Load semua gambar dari folder /stations/
-            // Sesuaikan path ini dengan struktur project kamu yang sebenarnya
             
             mejaAja = load("/stations/meja_aja.png");
 
@@ -58,7 +54,6 @@ public class StationView {
             plateStorageRight = load("/stations/plate_storage_right.png");
             
             servingCounter = load("/stations/serving_counter.png");
-            // Ada 2 alt right, pilih salah satu yang paling cocok
             servingCounterRight1 = load("/stations/serving_counter_right_alt1.png"); 
             
             trashStation = load("/stations/trash_station.png");
@@ -85,42 +80,39 @@ public class StationView {
     public void render(Graphics2D g2, Station station, int tileSize) {
         BufferedImage image = null;
         
-        // Hitung posisi grid (Column & Row)
+        // posisi grid (Column & Row)
         int col = station.x / tileSize;
         int row = station.y / tileSize;
         
-        // Tentukan orientasi berdasarkan posisi di layout
+        // orientasi berdasarkan posisi di layout
         boolean isLeftWall = (col == 0);
-        boolean isRightWall = (col == 13); // Max Col 14 (index 13)
-        boolean isBottomWall = (row >= 7); // Baris 8 & 9 (index 7, 8)
+        boolean isRightWall = (col == 13);
+        boolean isBottomWall = (row >= 7);
 
         // --- 1. CUTTING STATION ---
         if (station instanceof CuttingStation) {
-            image = cuttingStation; // Default (Down)
+            image = cuttingStation;
             
             if (isRightWall) {
                 if (cuttingStationLeft != null) image = cuttingStationLeft;
             }
-            // Note: Asset cutting_station_right.png tidak ada di list kamu, 
-            // jadi col 0 (Left Wall) akan pakai default.
         } 
         
         // --- 2. COOKING STATION ---
         else if (station instanceof CookingStation) {
-            image = cookingStation; // Default (Down)
+            image = cookingStation;
             
-            if (isLeftWall) { // Hadap Kanan
+            if (isLeftWall) {
                 if (cookingStationRight != null) image = cookingStationRight;
-            } else if (isRightWall) { // Hadap Kiri
+            } else if (isRightWall) {
                 if (cookingStationLeft != null) image = cookingStationLeft;
             }
         } 
         
         // --- 3. ASSEMBLY STATION ---
         else if (station instanceof AssemblyStation) {
-            image = assemblyStation; // Default (Full)
-            
-            // Jika ada di pinggir kiri/kanan, gunakan asset LeftRight jika mau
+            image = assemblyStation;
+
             if (isLeftWall || isRightWall) {
                 if (assemblyStationLR != null) image = assemblyStationLR;
             }
@@ -128,13 +120,7 @@ public class StationView {
         
         // --- 4. SERVING COUNTER ---
         else if (station instanceof ServingCounter) {
-            image = servingCounter; // Default (Left/Front)
-            
-            // Serving counter di layout ada di kanan (Col 14), hadap Kiri.
-            // Tapi kamu punya asset _right. Biasanya _right artinya "Barangnya ada di kanan (hadap kiri)"
-            // atau "Barangnya menghadap ke kanan".
-            // Kita coba logika: Jika di tembok kanan, pakai default (biasanya serving hadap kiri).
-            // Jika asset nama "right" artinya hadap kanan, pakai untuk tembok kiri.
+            image = servingCounter;
             
             if (isLeftWall) {
                if (servingCounterRight1 != null) image = servingCounterRight1; 
@@ -143,16 +129,10 @@ public class StationView {
         
         // --- 5. WASHING STATION ---
         else if (station instanceof WashingStation) {
-            // Logika Washing: 
-            // Default = UP (biasanya keran di atas)
-            // _down = Down (keran di bawah)
             
             if (isBottomWall) {
-                // Di baris bawah, station harus hadap ATAS. 
-                // Kita asumsikan washingStation.png adalah hadap Atas.
                 image = washingStation;
             } else {
-                // Di baris atas/tengah, hadap BAWAH.
                 if (washingStationDown != null) image = washingStationDown;
                 else image = washingStation;
             }
