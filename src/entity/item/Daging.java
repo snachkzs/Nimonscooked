@@ -10,10 +10,22 @@ public class Daging extends Ingredients implements InterfaceChopable, InterfaceC
     public Daging() {
         name = "Daging";
         raw = true;
+        loadImage();
+    }
+    
+    private void loadImage() {
         try {
-            image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/dagingmentah.png"));
+            if (isBurned) {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/daging_masak.png")); //blm ada assetnya
+            } else if (isCooked) {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/daging_masak.png"));
+            } else if (isChopped) {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/daging_potong_mentah.png"));
+            } else {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/daging_mentah.png"));
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error loading daging image: " + e.getMessage());
         }
     }
     
@@ -32,15 +44,17 @@ public class Daging extends Ingredients implements InterfaceChopable, InterfaceC
         this.isChopped = chopped;
         if (chopped) {
             name = "Daging Potong";
-            raw = false;
+            raw = true;
+            loadImage();
         }
     }
     
     @Override
     public Item getChoppedItem() {
         this.isChopped = true;
-        raw = false;
+        raw = true;
         name = "Daging Potong";
+        loadImage();
         return this;
     }
 
@@ -63,7 +77,8 @@ public class Daging extends Ingredients implements InterfaceChopable, InterfaceC
     public void setCooked(boolean cooked) {
         this.isCooked = cooked;
         if (cooked && !isBurned) {
-            name = "Daging (Cooked)";
+            name = "Patty Matang";
+            loadImage();
         }
     }
 
@@ -77,6 +92,7 @@ public class Daging extends Ingredients implements InterfaceChopable, InterfaceC
         this.isBurned = burned;
         if (burned) {
             name = "Daging (BURNED)";
+            loadImage();
         }
     }
 
@@ -84,12 +100,15 @@ public class Daging extends Ingredients implements InterfaceChopable, InterfaceC
     public void cook() {
         this.isCooked = true;
         name = "Patty Matang";
+        raw = false;
+        loadImage();
     }
     
     public Item getCookedItem() {
         if (isChopped) {
             this.isCooked = true;
             name = "Patty Matang";
+            loadImage();
             return this;
         }
         return null;

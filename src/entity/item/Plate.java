@@ -2,6 +2,7 @@ package entity.item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
 
 public class Plate extends KitchenUtensil {
     private boolean isDirty = false;
@@ -12,6 +13,18 @@ public class Plate extends KitchenUtensil {
         this.collision = false;
         this.isDirty = false;
     }
+
+    private void loadImage() {
+        try {
+            if (isDirty) {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/plate_dirty.png"));
+            } else {
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/plate_clean.png"));
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading piring image: " + e.getMessage());
+        }
+    }  
 
     @Override
     public String getAssetPath() {
@@ -28,7 +41,6 @@ public class Plate extends KitchenUtensil {
             return false;
         }
         
-        // Check if ingredient is burned
         if (ingredient instanceof InterfaceCookable) {
             InterfaceCookable cookable = (InterfaceCookable) ingredient;
             if (cookable.isBurned()) {

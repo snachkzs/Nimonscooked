@@ -38,11 +38,10 @@ public class ChefView {
             g2.fillOval(chef.getX() + tileSize/2 - 5, chef.getY() - 10, 10, 10);
         }
         
-        // Draw indicator for busy chef
+        // indikator busy chef
         if (chef.isBusy()) {
             g2.setColor(Color.ORANGE);
             g2.fillRect(chef.getX(), chef.getY() - 20, tileSize, 5);
-            // Progress bar could be added here
         }
     }
     
