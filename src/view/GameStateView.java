@@ -251,7 +251,11 @@ public class GameStateView {
     // belom ada assetnya
     private void renderStageOver(Graphics2D g2, int screenWidth, int screenHeight, boolean passed, int finalScore) {
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
-        g2.setColor(new Color(0, 0, 0, 200));
+        if (passed) {
+            g2.setColor(new Color(30, 80, 140, 220));
+        } else {
+            g2.setColor(new Color(40, 50, 80, 220));
+        }
         g2.fillRect(0, 0, screenWidth, screenHeight);
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
@@ -261,47 +265,66 @@ public class GameStateView {
         int x = (screenWidth - boxWidth) / 2;
         int y = (screenHeight - boxHeight) / 2;
         
-
-        if (passed) {
-            g2.setColor(new Color(50, 150, 50)); // Green for pass
-        } else {
-            g2.setColor(new Color(150, 50, 50)); // Red for fail
-        }
+        // White box background
+        g2.setColor(Color.WHITE);
         g2.fillRoundRect(x, y, boxWidth, boxHeight, 20, 20);
         
-        // Border
-        g2.setColor(Color.WHITE);
-        g2.setStroke(new BasicStroke(3));
+        g2.setStroke(new BasicStroke(5));
+        if (passed) {
+            g2.setColor(new Color(255, 180, 50));
+        } else {
+            g2.setColor(new Color(220, 80, 80));
+        }
         g2.drawRoundRect(x, y, boxWidth, boxHeight, 20, 20);
+
+        if (passed) {
+            g2.setColor(new Color(255, 200, 50));
+            int[] starX = {x + 40, x + boxWidth - 60, x + 70, x + boxWidth - 90};
+            int[] starY = {y + 50, y + 60, y + boxHeight - 70, y + boxHeight - 80};
+            for (int i = 0; i < starX.length; i++) {
+                g2.fillPolygon(
+                    new int[]{starX[i], starX[i] + 8, starX[i] + 15, starX[i] + 8},
+                    new int[]{starY[i] + 8, starY[i], starY[i] + 8, starY[i] + 15},
+                    4
+                );
+            }
+        }
         
-        // Title
-        g2.setColor(Color.WHITE);
         g2.setFont(new Font("Katoria Sans", Font.BOLD, 48));
-        String title = passed ? "STAGE CLEAR!" : "STAGE FAILED";
-        int titleWidth = g2.getFontMetrics().stringWidth(title);
-        g2.drawString(title, x + (boxWidth - titleWidth) / 2, y + 80);
+        if (passed) {
+            g2.setColor(new Color(50, 150, 200)); 
+            String title = "STAGE CLEAR!";
+            int titleWidth = g2.getFontMetrics().stringWidth(title);
+            g2.drawString(title, x + (boxWidth - titleWidth) / 2, y + 80);
+        } else {
+            g2.setColor(new Color(220, 80, 80));
+            String title = "STAGE FAILED";
+            int titleWidth = g2.getFontMetrics().stringWidth(title);
+            g2.drawString(title, x + (boxWidth - titleWidth) / 2, y + 80);
+        }
         
-        // Score
+        g2.setColor(new Color(40, 70, 110));
         g2.setFont(new Font("Katoria Sans", Font.BOLD, 32));
         String scoreText = "Final Score: " + finalScore;
         int scoreWidth = g2.getFontMetrics().stringWidth(scoreText);
-        g2.drawString(scoreText, x + (boxWidth - scoreWidth) / 2, y + 140);
+        g2.drawString(scoreText, x + (boxWidth - scoreWidth) / 2, y + 150);
         
-        // Result message
-        g2.setFont(new Font("Katoria Sans", Font.PLAIN, 24));
+        g2.setFont(new Font("Katoria Sans", Font.PLAIN, 22));
         String message;
         if (passed) {
-            message = "Congratulations! You passed the stage!";
+            g2.setColor(new Color(50, 150, 200));
+            message = "Anjayy, Gacor juga!";a
         } else {
-            message = "Try again to pass the stage!";
+            g2.setColor(new Color(150, 70, 70)); 
+            message = "AOWKWOKWOKWOKO smgt y!";
         }
         int messageWidth = g2.getFontMetrics().stringWidth(message);
-        g2.drawString(message, x + (boxWidth - messageWidth) / 2, y + 190);
+        g2.drawString(message, x + (boxWidth - messageWidth) / 2, y + 210);
         
-        // Instructions
-        g2.setFont(new Font("Katoria Sans", Font.PLAIN, 20));
+        g2.setColor(new Color(255, 160, 0));
+        g2.setFont(new Font("Katoria Sans", Font.BOLD, 20));
         String instruction = "Press SPACE to continue";
         int instrWidth = g2.getFontMetrics().stringWidth(instruction);
-        g2.drawString(instruction, x + (boxWidth - instrWidth) / 2, y + boxHeight - 40);
+        g2.drawString(instruction, x + (boxWidth - instrWidth) / 2, y + boxHeight - 50);
     }
 }
