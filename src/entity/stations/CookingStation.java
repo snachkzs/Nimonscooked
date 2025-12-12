@@ -11,7 +11,8 @@ public class CookingStation extends Station {
 
     public CookingStation(int x, int y, int width, int height) {
         super(x, y, width, height);
-        this.fryingPan = new FryingPan(); // frying pan ada di cooking station
+        this.fryingPan = new FryingPan();
+        setStoredItem(this.fryingPan);
     }
 
     @Override
@@ -22,6 +23,7 @@ public class CookingStation extends Station {
         if (heldItem instanceof FryingPan) {
             if (fryingPan == null) {
                 fryingPan = (FryingPan) chef.getInventory().remove(0);
+                setStoredItem(fryingPan);
                 System.out.println("Menaruh Frying Pan di Cooking Station");
                 
                 if (fryingPan.hasIngredient() && !fryingPan.isCooking()) {
@@ -36,13 +38,14 @@ public class CookingStation extends Station {
             chef.getInventory().add(fryingPan);
             System.out.println("Mengambil Frying Pan dari Cooking Station");
             fryingPan = null;
+            setStoredItem(null);
         }
         // chef takes item
         else if (heldItem instanceof Plate && fryingPan != null) {
             Plate plate = (Plate) heldItem;
             fryingPan.transferToPlate(plate);
         }
-        // chef transfers ingredient to frying pan
+        // transfer ingredient to frying pan
         else if (heldItem != null && fryingPan != null) {
             boolean added = fryingPan.addIngredient(heldItem);
             if (added) {

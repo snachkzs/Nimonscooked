@@ -15,8 +15,9 @@ public class CuttingStation extends Station {
         // pickup/drop
         if (this.storedItem == null && !chef.getInventory().isEmpty()) {
 
-            this.storedItem = chef.getInventory().remove(0);
-            System.out.println("Menaruh " + storedItem.getName() + " di Cutting Station.");
+            Item itemToPlace = chef.getInventory().remove(0);
+            setStoredItem(itemToPlace);
+            System.out.println("Menaruh " + itemToPlace.getName() + " di Cutting Station.");
             return;
         }
         

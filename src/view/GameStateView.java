@@ -82,7 +82,7 @@ public class GameStateView {
                 renderCreditsOverlay(g2, screenWidth, screenHeight);
                 break;
             case 4: // stageSelectState
-                renderStageSelect(g2, screenWidth, screenHeight);
+                renderStageSelect(g2, screenWidth, screenHeight, stagePassed);
                 break;
             case 5: // playState
                 // handled in GamePanel
@@ -119,7 +119,7 @@ public class GameStateView {
         
         int selectedY = startY + (menuSelection * menuSpacing);
         
-        g2.setColor(new Color(255, 255, 255, 100)); // Semi-transparent white
+        g2.setColor(new Color(255, 255, 255, 100));
         g2.setStroke(new BasicStroke(2));
         int boxWidth = 75;
         int boxHeight = 20;
@@ -144,27 +144,36 @@ public class GameStateView {
     }
     
     private void renderCreditsOverlay(Graphics2D g2, int screenWidth, int screenHeight) {
+        // Dark blue overlay (Overcooked theme)
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
-        g2.setColor(new Color(0, 0, 0, 180));
+        g2.setColor(new Color(30, 60, 100, 180)); // Dark blue
         g2.fillRect(0, 0, screenWidth, screenHeight);
         
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         
-        int boxWidth = (int)(screenWidth * 0.6);
-        int boxHeight = (int)(screenHeight * 0.6);
+        int boxWidth = (int)(screenWidth * 0.7);
+        int boxHeight = (int)(screenHeight * 0.7);
         int x = (screenWidth - boxWidth) / 2;
         int y = (screenHeight - boxHeight) / 2;
         
+        // White background box
         g2.setColor(Color.WHITE);
         g2.fillRoundRect(x, y, boxWidth, boxHeight, 20, 20);
+        
+        // Blue border
+        g2.setColor(new Color(70, 130, 180)); // Steel blue
+        g2.setStroke(new java.awt.BasicStroke(4));
+        g2.drawRoundRect(x, y, boxWidth, boxHeight, 20, 20);
          
-        // assetnya juga belom dibikin
-        g2.setColor(Color.BLACK);
+        // Title in orange/yellow (Overcooked accent color)
+        g2.setColor(new Color(255, 160, 0)); // Bright orange
         g2.setFont(new Font("Katoria Sans", Font.BOLD, 32));
         String title = "CREDITS";
         int titleWidth = g2.getFontMetrics().stringWidth(title);
         g2.drawString(title, x + (boxWidth - titleWidth) / 2, y + 60);
         
+        // Content in dark blue
+        g2.setColor(new Color(40, 70, 110)); // Dark blue text
         g2.setFont(new Font("Katoria Sans", Font.PLAIN, 20));
         String[] credits = {
             "TEAM",
@@ -185,9 +194,24 @@ public class GameStateView {
         }
     }
     
-    private void renderStageSelect(Graphics2D g2, int screenWidth, int screenHeight) {
+    private void renderStageSelect(Graphics2D g2, int screenWidth, int screenHeight, boolean stagePassed) {
         if (stageSelect != null) {
             g2.drawImage(stageSelect, 0, 0, screenWidth, screenHeight, null);
+        }
+        
+        if (stagePassed) {
+            g2.setFont(new Font("Katoria Sans", Font.BOLD, 24));
+            g2.setColor(new Color(100, 200, 100));
+            String successText = "SUCCEEDED!";
+            int textWidth = g2.getFontMetrics().stringWidth(successText);
+            int textX = screenWidth - textWidth - 30;
+            int textY = 60; 
+            
+            g2.setColor(Color.BLACK);
+            g2.drawString(successText, textX + 2, textY + 2);
+            
+            g2.setColor(new Color(100, 200, 100));
+            g2.drawString(successText, textX, textY);
         }
     }
     

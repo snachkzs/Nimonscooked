@@ -167,6 +167,7 @@ public class Chef implements Runnable {
             else if(keyH.leftPressed){ direction = "left"; }
             else if(keyH.rightPressed){ direction = "right"; }
 
+
             collisionOn = false;
             gp.collisionChecker.checkTile(this);
             gp.collisionChecker.checkChef(this);
@@ -225,7 +226,6 @@ public class Chef implements Runnable {
     }
     
     private entity.stations.Station findNearbyStation() {
-        int interactionRange = gp.tileSize; 
         entity.stations.Station closestStation = null;
         int minDistance = Integer.MAX_VALUE;
         
@@ -236,6 +236,7 @@ public class Chef implements Runnable {
                 
                 boolean isInFront = false;
                 int distance = 0;
+                int interactionRange = gp.tileSize; // Default range
                 
                 switch(direction) {
                     case "up":
@@ -243,7 +244,9 @@ public class Chef implements Runnable {
                         distance = this.y - stationY;
                         break;
                     case "down":
-                        isInFront = (stationY > this.y) && (Math.abs(stationX - this.x) <= gp.tileSize/2);
+                        // Chef di atas station facing down - range dan tolerance lebih besar
+                        interactionRange = (int)(gp.tileSize * 1.2); // 1.5x range untuk down
+                        isInFront = (stationY > this.y) && (Math.abs(stationX - this.x) <= gp.tileSize);
                         distance = stationY - this.y;
                         break;
                     case "left":
@@ -310,8 +313,4 @@ public class Chef implements Runnable {
     public boolean isMoving() { return isMoving; }
     public int getSpriteNum() { return spriteNum; }
     public ArrayList<Item> getInventory() { return inventory; }
-    
-    public void clearInventory() {
-        inventory.clear();
-    }
 }

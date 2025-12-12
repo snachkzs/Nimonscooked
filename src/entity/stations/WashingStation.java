@@ -5,6 +5,9 @@ import entity.item.Plate;
 import java.util.Stack;
 
 public class WashingStation extends Station {
+    private static int instanceCounter = 0;
+    private final int instanceId;
+    
     // Washing area
     private Stack<Plate> dirtyPlates = new Stack<>();
     
@@ -12,23 +15,23 @@ public class WashingStation extends Station {
     private Stack<Plate> cleanPlates = new Stack<>();
     
     private int washingProgress = 0;
-    private final int WASHING_TIME = 600; // 10 seconds
+    private final int WASHING_TIME = 180; // 3 seconds
     private boolean isWashing = false;
     private Chef currentChef = null;
 
     public WashingStation(int x, int y, int width, int height) {
         super(x, y, width, height);
+        this.instanceId = ++instanceCounter;
     }
 
     public void update() {
-        if (isWashing && currentChef != null && !dirtyPlates.isEmpty()) {
-            if (isChefNearby(currentChef)) {
-                washingProgress++;
-                if (washingProgress >= WASHING_TIME) {
-                    completeCleaning();
-                }
-            } else {
-                pauseWashing();
+        if (isWashing && !dirtyPlates.isEmpty()) {
+            washingProgress++;
+            if (washingProgress % 60 == 0) {
+                System.out.println("Mencuci... Progress: " + (washingProgress * 100 / WASHING_TIME) + "%");
+            }
+            if (washingProgress >= WASHING_TIME) {
+                completeCleaning();
             }
         }
     }
@@ -65,15 +68,23 @@ public class WashingStation extends Station {
     @Override
     public void interact(Chef chef) {
         boolean hasItem = !chef.getInventory().isEmpty();
-        Plate heldPlate = hasItem && chef.getInventory().get(0) instanceof Plate 
-                         ? (Plate) chef.getInventory().get(0) : null;
         
-        // put dirty plate on station area
-        if (heldPlate != null) {
-            if (heldPlate.isDirty()) {
-                dirtyPlates.push(heldPlate);
-                chef.getInventory().remove(0);
-                System.out.println("Menaruh piring kotor (Total: " + dirtyPlates.size() + ")");
+        // put dirty plate to station
+        if (hasItem && chef.getInventory().get(0) instanceof Plate) {
+            Plate firstPlate = (Plate) chef.getInventory().get(0);
+            if (firstPlate.isDirty()) {
+                int count = 0;
+                while (!chef.getInventory().isEmpty() && chef.getInventory().get(0) instanceof Plate) {
+                    Plate plate = (Plate) chef.getInventory().get(0);
+                    if (plate.isDirty()) {
+                        dirtyPlates.push(plate);
+                        chef.getInventory().remove(0);
+                        count++;
+                    } else {
+                        break;
+                    }
+                }
+                System.out.println("Menaruh " + count + " piring kotor (Total di station: " + dirtyPlates.size() + ")");
             } else {
                 System.out.println("Piring ini sudah bersih!");
             }
@@ -83,7 +94,7 @@ public class WashingStation extends Station {
         // Take clean plate
         if (!cleanPlates.isEmpty() && !hasItem && !isWashing) {
             chef.getInventory().add(cleanPlates.pop());
-            System.out.println("✨ Mengambil piring bersih (Tersisa: " + cleanPlates.size() + ")");
+            System.out.println("Mengambil piring bersih (Tersisa: " + cleanPlates.size() + ")");
             return;
         }
         
@@ -97,7 +108,7 @@ public class WashingStation extends Station {
                     System.out.println("Melanjutkan mencuci piring... (Stay dekat station)");
                     System.out.println("Progres: " + (washingProgress * 100 / WASHING_TIME) + "%");
                 } else {
-                    System.out.println("Mulai mencuci piring... (Stay dekat station 10 detik)");
+                    System.out.println("Mulai mencuci piring... (Stay dekat station 3 detik)");
                 }
             }
             return;

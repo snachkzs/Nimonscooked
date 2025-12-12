@@ -122,7 +122,7 @@ public class StationView {
         else if (station instanceof ServingCounter) {
             image = servingCounter;
             
-            if (isLeftWall) {
+            if (isRightWall) {
                if (servingCounterRight1 != null) image = servingCounterRight1; 
             }
         } 

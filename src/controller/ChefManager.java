@@ -77,9 +77,8 @@ public class ChefManager {
     }
     
     public void resetChefs() {
-        // Clear inventories
-        chef1.clearInventory();
-        chef2.clearInventory();
+        chef1.getInventory().clear();
+        chef2.getInventory().clear();
         
         // Reset positions
         chef1.setX(288);

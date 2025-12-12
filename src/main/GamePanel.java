@@ -112,7 +112,7 @@ public class GamePanel extends JPanel implements Runnable{
     public void startGame() {
         stageTimeRemaining = 180; // game time
         timerFrameCounter = 0;
-        currentScore = 0;
+        currentScore = 0; // skor awal
         consecutiveFailedOrders = 0;
         stagePassed = false;
         
@@ -283,10 +283,9 @@ public class GamePanel extends JPanel implements Runnable{
         int baseScreenWidth = (int)(screenWidth/renderScale);
         int baseScreenHeight = (int)(screenHeight/renderScale);
         
-        // Set font
         g2.setFont(new java.awt.Font("Katoria Sans", java.awt.Font.BOLD, 20));
         
-        // Render score (bottom left)
+        // Render score
         g2.setColor(new Color(255, 255, 255));
         String scoreText = "Score: " + currentScore;
         g2.drawString(scoreText, 10, baseScreenHeight - 10);

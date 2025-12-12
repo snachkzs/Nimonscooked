@@ -6,7 +6,6 @@ import entity.item.Plate;
 import entity.item.FryingPan;
 
 public class AssemblyStation extends Station {
-    private Item storedItem;
 
     public AssemblyStation(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -50,8 +49,9 @@ public class AssemblyStation extends Station {
         }
         // place item on empty station
         else if (heldItem != null && storedItem == null) {
-            storedItem = chef.getInventory().remove(0);
-            System.out.println("Menaruh " + storedItem.getName() + " di assembly station");
+            Item itemToPlace = chef.getInventory().remove(0);
+            setStoredItem(itemToPlace);
+            System.out.println("Menaruh " + itemToPlace.getName() + " di assembly station");
         }
         // item stays in inventory
         else if (heldItem != null && storedItem != null) {

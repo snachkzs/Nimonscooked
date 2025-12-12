@@ -42,6 +42,8 @@ public class KeyHandler implements KeyListener{
                     gp.showHowToPlayOverlay = false;
                 } else if (gp.showCreditsOverlay) {
                     gp.showCreditsOverlay = false;
+                } else{
+                    System.exit(0);
                 }
                 return;
             }
@@ -130,10 +132,8 @@ public class KeyHandler implements KeyListener{
             }
         }
         
-        // Stage Over state
         else if (gp != null && gp.gameState == gp.stageOverState) {
             if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_ENTER) {
-                // Return to stage select
                 gp.gameState = gp.stageSelectState;
             }
         }

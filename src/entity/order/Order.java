@@ -4,6 +4,7 @@ public class Order {
     private int id;
     private Recipe recipe;
     private int timeLeft;
+    private int initialTime;
     private int reward;
     private int penalty;
 
@@ -11,6 +12,7 @@ public class Order {
         this.id = id;
         this.recipe = recipe;
         this.timeLeft = timeLeft;
+        this.initialTime = timeLeft;
         this.reward = reward;
         this.penalty = penalty;
     }
@@ -21,6 +23,10 @@ public class Order {
 
     public int getTimeLeft() {
         return timeLeft;
+    }
+    
+    public int getInitialTime() {
+        return initialTime;
     }
     
     public int getReward() { 

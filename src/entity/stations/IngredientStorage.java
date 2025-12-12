@@ -13,35 +13,31 @@ public class IngredientStorage extends Station {
 
     @Override
     public void interact(Chef chef) {
-        // Behavior: 
-        // 1. If empty hands + no stored item -> take ingredient (unlimited stock)
-        // 2. If holding item + no stored item -> place item (works like Assembly Station)
-        // 3. If empty hands + has stored item -> take stored item
-        // 4. If holding item + has stored item -> cannot interact
         
         if (this.storedItem == null) {
-            // No item stored on station
+            // station empty    
             if (chef.getInventory().isEmpty()) {
-                // Empty hands -> give ingredient (unlimited stock)
+                // inventory empty
                 Item ingredient = createIngredient();
                 if (ingredient != null) {
                     chef.getInventory().add(ingredient);
                     System.out.println("Mengambil " + ingredient.getName() + " dari storage (unlimited stock)");
                 }
             } else {
-                // Holding item -> place on station (like Assembly Station)
-                this.storedItem = chef.getInventory().remove(0);
-                System.out.println("Menaruh " + storedItem.getName() + " di ingredient storage");
+                // put items on station
+                Item itemToPlace = chef.getInventory().remove(0);
+                setStoredItem(itemToPlace);
+                System.out.println("Menaruh " + itemToPlace.getName() + " di ingredient storage");
             }
         } else {
             // Has stored item
             if (chef.getInventory().isEmpty()) {
-                // Empty hands -> take stored item
+                // take item from station
                 chef.getInventory().add(this.storedItem);
                 System.out.println("Mengambil " + storedItem.getName() + " dari ingredient storage");
                 this.storedItem = null;
             } else {
-                // Holding item -> cannot interact
+                // holding item
                 System.out.println("Station sudah ada item! Kosongkan tangan atau ambil item di station dulu");
             }
         }

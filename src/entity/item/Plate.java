@@ -9,17 +9,22 @@ public class Plate extends KitchenUtensil {
     private List<Item> ingredients = new ArrayList<>();
 
     public Plate() {
-        super("Plate");
+        this(false);
+    }
+    
+    public Plate(boolean isDirty) {
+        super(isDirty ? "Plate (Dirty)" : "Plate");
         this.collision = false;
-        this.isDirty = false;
+        this.isDirty = isDirty;
+        loadImage();
     }
 
     private void loadImage() {
         try {
             if (isDirty) {
-                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/plate_dirty.png"));
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/kitchen-utensil/plate_dirty.png"));
             } else {
-                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/ingredients/plate_clean.png"));
+                image = javax.imageio.ImageIO.read(getClass().getResourceAsStream("/kitchen-utensil/plate_clean.png"));
             }
         } catch (IOException e) {
             System.out.println("Error loading piring image: " + e.getMessage());
@@ -93,15 +98,21 @@ public class Plate extends KitchenUtensil {
 
     public void setDirty() {
         this.isDirty = true;
+        this.name = "Plate (Dirty)";
         this.ingredients.clear();
+        loadImage();
     }
 
     public void setClean() {
         this.isDirty = false;
+        this.name = "Plate";
+        loadImage();
     }
 
     public void wash() {
         this.isDirty = false;
+        this.name = "Plate";
+        loadImage();
         System.out.println("Piring telah dicuci bersih");
     }
 

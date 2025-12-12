@@ -27,6 +27,9 @@ public abstract class Station {
     
     public synchronized void setStoredItem(Item item) {
         this.storedItem = item;
+        if (item != null) {
+            item.setPosition(this.x, this.y);
+        }
     }
     
     public synchronized boolean hasItem() {
