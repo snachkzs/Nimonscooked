@@ -9,11 +9,10 @@ import java.util.concurrent.*;
 import entity.item.Item;
 import entity.item.Ingredients;
 
-
 public class Chef implements Runnable {
     private String id;
     private String name;
-    private volatile int x, y;  // volatile untuk thread safety
+    private volatile int x, y;  
     private int speed;
     private volatile String direction;
     private volatile boolean isMoving = false;
@@ -26,7 +25,6 @@ public class Chef implements Runnable {
 
     KeyHandler keyH;
     
-    // Thread control
     private volatile boolean running = false;
     private volatile boolean paused = false;
     private Thread chefThread;
@@ -41,7 +39,6 @@ public class Chef implements Runnable {
     private int pickUpDropCooldown = 0;
     private final int PICK_UP_DROP_DELAY = 15;
     
-
     private int spriteCounter = 0;
     private int spriteNum = 1;
 
@@ -67,24 +64,11 @@ public class Chef implements Runnable {
         taskScheduler = Executors.newSingleThreadExecutor();
     }
 
+    // Constructor overload untuk backward compatibility (jika ada)
     public Chef(GamePanel gp, KeyHandler keyH, int x, int y){
-        this.gp = gp;
-        this.keyH = keyH;
+        this(gp, keyH, "C0", "Chef");
         this.x = x;
         this.y = y;
-
-        speed = 4;
-        direction = "down";
-
-        collisionArea = new Rectangle();
-        collisionArea.x = 8;
-        collisionArea.y = 16;
-        collisionArea.width = 32;
-        collisionArea.height = 32;
-        collisionAreaDefaultX = collisionArea.x;
-        collisionAreaDefaultY = collisionArea.y;
-
-        taskScheduler = Executors.newSingleThreadExecutor();
     }
     
     public void startThread() {
@@ -109,27 +93,18 @@ public class Chef implements Runnable {
         }
     }
     
-    public void pause() {
-        paused = true;
-    }
-    
-    public void resume() {
-        paused = false;
-    }
+    public void pause() { paused = true; }
+    public void resume() { paused = false; }
     
     @Override
     public void run() {
         long lastTime = System.nanoTime();
-        double nsPerTick = 1000000000.0 / 60.0; // 60 FPS
+        double nsPerTick = 1000000000.0 / 60.0;
         double delta = 0;
         
         while (running) {
             if (paused) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
                 continue;
             }
             
@@ -142,11 +117,7 @@ public class Chef implements Runnable {
                 delta--;
             }
             
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            try { Thread.sleep(1); } catch (InterruptedException e) { e.printStackTrace(); }
         }
     }
 
@@ -155,13 +126,8 @@ public class Chef implements Runnable {
         this.isMoving = false;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public String getCurrentAction() {
-        return currentAction;
-    }
+    public boolean isActive() { return isActive; }
+    public String getCurrentAction() { return currentAction; }
 
     public void update(){
         if (isBusy) {
@@ -177,12 +143,10 @@ public class Chef implements Runnable {
             return;
         }
         
-        // cooldown pickUp/drop
         if (pickUpDropCooldown > 0) {
             pickUpDropCooldown--;
         }
         
-        // pick up/drop item
         if (keyH.pickUpDrop && pickUpDropCooldown == 0) {
             if (!interactWithNearbyStation()) {
                 int itemIndex = gp.collisionChecker.checkItem(this);
@@ -198,43 +162,29 @@ public class Chef implements Runnable {
     
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed){
             isMoving = true;
-            if(keyH.upPressed){
-                direction = "up";
-            }
-            else if(keyH.downPressed){
-                direction = "down";
-            }
-            else if(keyH.leftPressed){
-                direction = "left";
-            }
-            else if(keyH.rightPressed){
-                direction = "right";
-            }
+            if(keyH.upPressed){ direction = "up"; }
+            else if(keyH.downPressed){ direction = "down"; }
+            else if(keyH.leftPressed){ direction = "left"; }
+            else if(keyH.rightPressed){ direction = "right"; }
 
+            // CHECK COLLISION
             collisionOn = false;
             gp.collisionChecker.checkTile(this);
+            gp.collisionChecker.checkChef(this); // <-- TAMBAHKAN INI (Cek tabrakan sesama Chef)
 
+            // IF COLLISION IS FALSE, PLAYER CAN MOVE
             if (!collisionOn){
                 switch(direction){
-                    case "up":
-                        y -= speed;
-                        break;
-                        case "down":
-                            y += speed;
-                            break;
-                        case "left":
-                            x -= speed;
-                            break;
-                        case "right":
-                            x += speed;
-                            break;
+                    case "up": y -= speed; break;
+                    case "down": y += speed; break;
+                    case "left": x -= speed; break;
+                    case "right": x += speed; break;
                 }
             }
         } else {
             isMoving = false;
         }
         
-        // Update sprite animation
         if (isMoving) {
             spriteCounter++;
             if (spriteCounter > 12) {
@@ -247,7 +197,6 @@ public class Chef implements Runnable {
         }
     }
     
-
     public void pickUpDrop(int i){
         if (i != 999){
             if (inventory.isEmpty()) {
@@ -287,7 +236,6 @@ public class Chef implements Runnable {
                 int stationX = gp.stationList[i].x;
                 int stationY = gp.stationList[i].y;
                 
-                // Check if station is in front of chef based on direction
                 boolean isInFront = false;
                 int distance = 0;
                 
@@ -336,7 +284,6 @@ public class Chef implements Runnable {
                 return false;
             }
         }
-        
         return false;
     }
     
@@ -349,59 +296,20 @@ public class Chef implements Runnable {
             cuttingStation.startCutting(this);
             return;
         }
-        
         System.out.println("Tidak ada cutting station di sekitar");
     }
 
-    public void setBusy(boolean busy) {
-        this.isBusy = busy;
-    }
-
-    public boolean isBusy() {
-        return isBusy;
-    }
-    
-    public String getId() { 
-        return id; 
-    }
-    
-    public String getName() { 
-        return name; 
-    }
-    
-    public int getX() { 
-        return x; 
-    }
-    
-    public void setX(int x) {
-        this.x = x;
-    }
-    
-    public int getY() { 
-        return y; 
-    }
-    
-    public void setY(int y) {
-        this.y = y;
-    }
-    
-    public String getDirection() { 
-        return direction; 
-    }
-    
-    public int getSpeed() { 
-        return speed; 
-    }
-    
-    public boolean isMoving() {
-        return isMoving;
-    }
-    
-    public int getSpriteNum() {
-        return spriteNum;
-    }
-    
-    public ArrayList<Item> getInventory() {
-        return inventory;
-    }
+    public void setBusy(boolean busy) { this.isBusy = busy; }
+    public boolean isBusy() { return isBusy; }
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public int getX() { return x; }
+    public void setX(int x) { this.x = x; }
+    public int getY() { return y; }
+    public void setY(int y) { this.y = y; }
+    public String getDirection() { return direction; }
+    public int getSpeed() { return speed; }
+    public boolean isMoving() { return isMoving; }
+    public int getSpriteNum() { return spriteNum; }
+    public ArrayList<Item> getInventory() { return inventory; }
 }

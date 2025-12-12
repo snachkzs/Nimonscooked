@@ -76,24 +76,14 @@ public class CollisionChecker {
                 int objectBottomY = gp.itemList[i].y + gp.itemList[i].collisionArea.y + gp.itemList[i].collisionArea.height;
 
                 switch(chef.getDirection()){
-                    case "up":
-                        chefTopY -= chef.getSpeed();
-                        break;
-                    case "down":
-                        chefBottomY += chef.getSpeed();
-                        break;
-                    case "left":
-                        chefLeftX -= chef.getSpeed();
-                        break;
-                    case "right":
-                        chefRightX += chef.getSpeed();
-                        break;
+                    case "up": chefTopY -= chef.getSpeed(); break;
+                    case "down": chefBottomY += chef.getSpeed(); break;
+                    case "left": chefLeftX -= chef.getSpeed(); break;
+                    case "right": chefRightX += chef.getSpeed(); break;
                 }
 
-                if (chefLeftX < objectRightX &&
-                    chefRightX > objectLeftX &&
-                    chefTopY < objectBottomY &&
-                    chefBottomY > objectTopY){
+                if (chefLeftX < objectRightX && chefRightX > objectLeftX &&
+                    chefTopY < objectBottomY && chefBottomY > objectTopY){
                     
                     if (gp.itemList[i].collision == true){
                         chef.collisionOn = true;
@@ -103,5 +93,39 @@ public class CollisionChecker {
             }
         }
         return index;
+    }
+
+    // --- NEW METHOD: Check Collision with Other Chef ---
+    public void checkChef(Chef entity) {
+        // Tentukan siapa targetnya (Chef lain)
+        Chef target = (entity == gp.chefManager.getChef1()) ? gp.chefManager.getChef2() : gp.chefManager.getChef1();
+        
+        if(target == null) return;
+
+        // Update posisi collision area ke posisi absolut di layar
+        entity.collisionArea.x = entity.getX() + entity.collisionArea.x;
+        entity.collisionArea.y = entity.getY() + entity.collisionArea.y;
+        
+        target.collisionArea.x = target.getX() + target.collisionArea.x;
+        target.collisionArea.y = target.getY() + target.collisionArea.y;
+
+        // Prediksi pergerakan entity
+        switch(entity.getDirection()) {
+            case "up": entity.collisionArea.y -= entity.getSpeed(); break;
+            case "down": entity.collisionArea.y += entity.getSpeed(); break;
+            case "left": entity.collisionArea.x -= entity.getSpeed(); break;
+            case "right": entity.collisionArea.x += entity.getSpeed(); break;
+        }
+
+        // Cek apakah kotak collision bertabrakan
+        if(entity.collisionArea.intersects(target.collisionArea)) {
+            entity.collisionOn = true;
+        }
+
+        // RESET posisi collision area ke default (PENTING!)
+        entity.collisionArea.x = entity.collisionAreaDefaultX;
+        entity.collisionArea.y = entity.collisionAreaDefaultY;
+        target.collisionArea.x = target.collisionAreaDefaultX;
+        target.collisionArea.y = target.collisionAreaDefaultY;
     }
 }
