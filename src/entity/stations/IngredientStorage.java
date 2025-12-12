@@ -68,6 +68,10 @@ public class IngredientStorage extends Station {
         return ingredientType;
     }
 
+    public String getStoredIngredientName() {
+        return ingredientType;
+    }
+
     @Override
     public String getType() {
         return "ingredient_storage_" + ingredientType;

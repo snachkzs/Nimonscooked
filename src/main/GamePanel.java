@@ -6,8 +6,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import utils.KeyHandler;
-import entity.Chef;
 import view.ChefView;
+import view.StationView;
 import entity.item.Daging;
 import entity.map.TileManager;
 import controller.CollisionChecker;
@@ -36,14 +36,15 @@ public class GamePanel extends JPanel implements Runnable{
     int FPS = 60;
 
     public TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler();
+    public KeyHandler keyH = new KeyHandler();
     Thread gameThread;
     public CollisionChecker collisionChecker = new CollisionChecker(this);
     public AssetSetter assetSetter = new AssetSetter(this);
     ChefView chefView = new ChefView();
+    public StationView stationView;
     GameStateView gameStateView = new GameStateView();
     public Item itemList[] = new Item[30]; 
-    public Station stationList[] = new Station[28];
+    public Station stationList[] = new Station[100];
     
     public ChefManager chefManager;
     public OrderManagement orderManager;
@@ -95,6 +96,8 @@ public class GamePanel extends JPanel implements Runnable{
 
         chefManager = new ChefManager(this, keyH);
         orderManager = new OrderManagement(this);
+        
+        stationView = new StationView();
     }
 
     public void setupGame(){
@@ -199,17 +202,23 @@ public class GamePanel extends JPanel implements Runnable{
         }
         
         if (gameState == playState || gameState == pauseState) {
-            // gambar tiles
+            // gambar tiles (Lantai/Background)
             tileM.draw(g2);
             
-            // gambar item
+            for (int i = 0; i < stationList.length; i++) {
+                if (stationList[i] != null) {
+                    stationView.render(g2, stationList[i], tileSize);
+                }
+            }
+            
+            // gambar item (Layer Atas)
             for (int i = 0; i < itemList.length; i++) {
                 if (itemList[i] != null) {
                     itemList[i].draw(g2, this);
                 }
             }
 
-            // gambar kedua chef
+            // gambar kedua chef (Layer Paling Atas)
             chefView.render(g2, chefManager.getChef1(), tileSize);
             chefView.render(g2, chefManager.getChef2(), tileSize);
             
