@@ -42,7 +42,7 @@ public class CookingStation extends Station {
             Plate plate = (Plate) heldItem;
             fryingPan.transferToPlate(plate);
         }
-        // cheft transfers ingredient to frying pan
+        // chef transfers ingredient to frying pan
         else if (heldItem != null && fryingPan != null) {
             boolean added = fryingPan.addIngredient(heldItem);
             if (added) {

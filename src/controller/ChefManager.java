@@ -75,4 +75,24 @@ public class ChefManager {
     public int getActiveChefIndex() {
         return activeChefIndex;
     }
+    
+    public void resetChefs() {
+        // Clear inventories
+        chef1.clearInventory();
+        chef2.clearInventory();
+        
+        // Reset positions
+        chef1.setX(288);
+        chef1.setY(96);
+        chef2.setX(384);
+        chef2.setY(240);
+        
+        // Reset to chef1 as active
+        chef1.setActive(true);
+        chef2.setActive(false);
+        activeChef = chef1;
+        activeChefIndex = 0;
+        
+        System.out.println("Chefs reset to starting positions");
+    }
 }

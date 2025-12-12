@@ -43,15 +43,13 @@ public class ServingCounter extends Station {
             
             chef.getInventory().remove(0);
             
-            // Display result message
             if (success) {
-                System.out.println("\n✅ Order berhasil disajikan!");
+                System.out.println("\nOrder berhasil disajikan!");
             } else {
-                System.out.println("\n❌ Order salah!");
+                System.out.println("\nOrder salah!");
             }
-            System.out.println("⏱️  Piring akan kembali dalam 10 detik...");
+            System.out.println("Piring akan kembali dalam 10 detik...");
             
-            // Return dirty plate after 10 seconds (same logic for both success/failure)
             returnDirtyPlate(plate);
             
         } else {
@@ -66,12 +64,12 @@ public class ServingCounter extends Station {
         
         new Thread(() -> {
             try {
-                Thread.sleep(10000); // 10 seconds
+                Thread.sleep(10000);
                 if (storage != null) {
                     storage.addDirtyPlate(plate);
-                    System.out.println("🍽️  Piring kotor kembali ke plate storage (cuci dulu sebelum dipakai)");
+                    System.out.println("Piring kotor kembali ke plate storage");
                 } else {
-                    System.out.println("❌ ERROR: PlateStorage is null!");
+                    System.out.println("ERROR: PlateStorage is null!");
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

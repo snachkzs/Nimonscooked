@@ -167,12 +167,10 @@ public class Chef implements Runnable {
             else if(keyH.leftPressed){ direction = "left"; }
             else if(keyH.rightPressed){ direction = "right"; }
 
-            // CHECK COLLISION
             collisionOn = false;
             gp.collisionChecker.checkTile(this);
-            gp.collisionChecker.checkChef(this); // <-- TAMBAHKAN INI (Cek tabrakan sesama Chef)
+            gp.collisionChecker.checkChef(this);
 
-            // IF COLLISION IS FALSE, PLAYER CAN MOVE
             if (!collisionOn){
                 switch(direction){
                     case "up": y -= speed; break;
@@ -312,4 +310,8 @@ public class Chef implements Runnable {
     public boolean isMoving() { return isMoving; }
     public int getSpriteNum() { return spriteNum; }
     public ArrayList<Item> getInventory() { return inventory; }
+    
+    public void clearInventory() {
+        inventory.clear();
+    }
 }
