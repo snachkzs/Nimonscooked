@@ -313,7 +313,7 @@ public class GameStateView {
         String message;
         if (passed) {
             g2.setColor(new Color(50, 150, 200));
-            message = "Anjayy, Gacor juga!";a
+            message = "Anjayy, Gacor juga!";
         } else {
             g2.setColor(new Color(150, 70, 70)); 
             message = "AOWKWOKWOKWOKO smgt y!";

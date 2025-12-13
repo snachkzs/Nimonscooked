@@ -38,6 +38,13 @@ public class Chef implements Runnable {
     
     private int pickUpDropCooldown = 0;
     private final int PICK_UP_DROP_DELAY = 15;
+    private boolean isDashing = false;
+    private int dashCounter = 0;
+    private int dashCooldown = 0;
+    private final int DASH_DURATION = 15; 
+    private final int DASH_COOLDOWN_TIME = 120;
+    private final int BASE_SPEED = 4;
+    private final int DASH_SPEED = 12;
     
     private int spriteCounter = 0;
     private int spriteNum = 1;
@@ -50,7 +57,7 @@ public class Chef implements Runnable {
         this.id = id;
         this.name = name;
 
-        speed = 4;
+        speed = BASE_SPEED;
         direction = "down";
 
         collisionArea = new Rectangle();
@@ -143,8 +150,23 @@ public class Chef implements Runnable {
             return;
         }
         
-        if (pickUpDropCooldown > 0) {
-            pickUpDropCooldown--;
+        if (pickUpDropCooldown > 0)pickUpDropCooldown--;
+        if (dashCooldown > 0) dashCooldown--;
+
+        // logic dash
+        if (isDashing) {
+            dashCounter--;
+            if (dashCounter <= 0) {
+                isDashing = false;
+                speed = BASE_SPEED;
+                dashCooldown = DASH_COOLDOWN_TIME;
+                System.out.println("Dash ended");
+            }
+        } else if (keyH.dashPressed && dashCooldown == 0) {
+            isDashing = true;
+            speed = DASH_SPEED;
+            dashCounter = DASH_DURATION;
+            System.out.println("DASH!");
         }
         
         if (keyH.pickUpDrop && pickUpDropCooldown == 0) {
@@ -156,7 +178,10 @@ public class Chef implements Runnable {
         }
         
         if (keyH.chopThrow && pickUpDropCooldown == 0) {
-            chopAtNearbyStation();
+            boolean chopping = chopAtNearbyStation();
+            if (!chopping && !inventory.isEmpty()) {
+                throwItem();
+            }
             pickUpDropCooldown = PICK_UP_DROP_DELAY;
         }
     
@@ -186,7 +211,7 @@ public class Chef implements Runnable {
         
         if (isMoving) {
             spriteCounter++;
-            if (spriteCounter > 12) {
+            if (spriteCounter > (isDashing ? 5 : 12)) {
                 spriteNum = (spriteNum == 1) ? 2 : 1;
                 spriteCounter = 0;
             }
@@ -224,6 +249,21 @@ public class Chef implements Runnable {
             }
         }
     }
+
+    public void throwItem() {
+        if (inventory.isEmpty()) return;
+        
+        Item itemToThrow = inventory.remove(0);
+        
+        Projectile p = gp.collisionChecker.calculateThrow(this, itemToThrow);
+        
+        if (p != null) {
+            gp.addProjectile(p);
+            System.out.println("Melempar " + itemToThrow.getName());
+        } else {
+            inventory.add(itemToThrow);
+        }
+    }
     
     private entity.stations.Station findNearbyStation() {
         entity.stations.Station closestStation = null;
@@ -244,8 +284,7 @@ public class Chef implements Runnable {
                         distance = this.y - stationY;
                         break;
                     case "down":
-                        // Chef di atas station facing down - range dan tolerance lebih besar
-                        interactionRange = (int)(gp.tileSize * 1.2); // 1.5x range untuk down
+                        interactionRange = (int)(gp.tileSize * 1.2);
                         isInFront = (stationY > this.y) && (Math.abs(stationX - this.x) <= gp.tileSize);
                         distance = stationY - this.y;
                         break;
@@ -288,16 +327,18 @@ public class Chef implements Runnable {
         return false;
     }
     
-    public void chopAtNearbyStation() {
+    public boolean chopAtNearbyStation() {
         entity.stations.Station station = findNearbyStation();
         
         if (station != null && station.getType().equals("cutting_station")) {
             System.out.println("=== [V] Chopping at cutting station ===");
             entity.stations.CuttingStation cuttingStation = (entity.stations.CuttingStation) station;
             cuttingStation.startCutting(this);
-            return;
+            return true;
         }
         System.out.println("Tidak ada cutting station di sekitar");
+        return false;
+
     }
 
     public void setBusy(boolean busy) { this.isBusy = busy; }

@@ -59,7 +59,7 @@ public class CuttingStation extends Station {
         
         InterfaceChopable itemPotong = (InterfaceChopable) this.storedItem;
         if (itemPotong.isChopped()) {
-            System.out.println("Item sudah dipotong! Tekan C untuk mengambil.");
+            System.out.println("Item sudah dipotong! Tekan . untuk mengambil.");
             return;
         }
         
@@ -82,7 +82,7 @@ public class CuttingStation extends Station {
                 
                 synchronized(this) {
                     item.setChopped(true);
-                    System.out.println(chef.getName() + " selesai memotong! Tekan C untuk ambil.");
+                    System.out.println(chef.getName() + " selesai memotong! Tekan / untuk ambil.");
                 }
                 
                 chef.setBusy(false);

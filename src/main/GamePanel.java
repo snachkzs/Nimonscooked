@@ -5,8 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import utils.KeyHandler;
 import entity.Chef;
+import entity.Projectile;
 import view.ChefView;
 import view.StationView;
 import entity.map.TileManager;
@@ -49,6 +51,9 @@ public class GamePanel extends JPanel implements Runnable{
     OrderView orderView = new OrderView();
     public Item itemList[] = new Item[30]; 
     public Station stationList[] = new Station[100];
+    
+    // Projectiles
+    public ArrayList<Projectile> projectiles = new ArrayList<>();
     
     public ChefManager chefManager;
     public OrderManagement orderManager;
@@ -127,6 +132,7 @@ public class GamePanel extends JPanel implements Runnable{
             stationList[i] = null;
         }
         assetSetter.setStation();
+        projectiles.clear();
         
         // Reset orders
         orderManager.reset();
@@ -204,6 +210,17 @@ public class GamePanel extends JPanel implements Runnable{
                     stationList[i].update();
                 }
             }
+
+            // update projectile
+            for (int i = 0; i < projectiles.size(); i++) {
+                Projectile p = projectiles.get(i);
+                if (p.isActive()) {
+                    p.update();
+                } else {
+                    projectiles.remove(i);
+                    i--;
+                }
+            }
         }
         if (gameState == pauseState) {
         }
@@ -246,6 +263,10 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
 
+            for (Projectile p : projectiles) {
+                p.draw(g2);
+            }
+
             // gambar kedua chef
             chefView.render(g2, chefManager.getChef1(), tileSize);
             chefView.render(g2, chefManager.getChef2(), tileSize);
@@ -273,6 +294,10 @@ public class GamePanel extends JPanel implements Runnable{
         
         g2.dispose();
     }
+
+    public void addProjectile(Projectile p) {
+        projectiles.add(p);
+    }
     
     private void endStage() {
         stagePassed = (currentScore >= MIN_SCORE_TO_PASS);
@@ -285,7 +310,6 @@ public class GamePanel extends JPanel implements Runnable{
         
         g2.setFont(new java.awt.Font("Katoria Sans", java.awt.Font.BOLD, 20));
         
-        // Render score
         g2.setColor(new Color(255, 255, 255));
         String scoreText = "Score: " + currentScore;
         g2.drawString(scoreText, 10, baseScreenHeight - 10);
@@ -295,7 +319,6 @@ public class GamePanel extends JPanel implements Runnable{
         String timerText = String.format("Time: %d:%02d", minutes, seconds);
         int timerWidth = g2.getFontMetrics().stringWidth(timerText);
         
-        // ganti warna timer
         if (stageTimeRemaining <= 30) {
             g2.setColor(new Color(255, 0, 0)); // Red
         } else if (stageTimeRemaining <= 60) {
