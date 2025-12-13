@@ -110,29 +110,29 @@ Project ini dibuat untuk memenuhi Tugas Besar IF2010 Pemrograman Berorientasi Ob
     <td align="center">
       <a href="https://github.com/snachkzs">
         <img src="https://github.com/snachkzs.png" width="80" style="border-radius: 50%"><br/>
-        <strong>Sharon Darma Putra</strong><br/>
-        18223107
+        <strong>Alma Felicia Vielrizki</strong><br/>
+        18223112
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/andreas916">
         <img src="https://github.com/andreas916.png" width="80" style="border-radius: 50%"><br/>
-        <strong>Desati Dinda S</strong><br/>
-        18223110
+        <strong>Andreas Saputra Tambun</strong><br/>
+        18224110
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/rafifazs20">
         <img src="https://github.com/rafifazs20.png" width="80" style="border-radius: 50%"><br/>
-        <strong>Alma Felicia V</strong><br/>
-        18223112
+        <strong>Muchammad Rafif Azis Syahlevi</strong><br/>
+        18224123
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/slpynsmnc">
         <img src="https://github.com/slpynsmnc.png" width="80" style="border-radius: 50%"><br/>
-        <strong>Nakeisha V. Shakila</strong><br/>
-        18223133
+        <strong>Herlambang Setiaji Prabowo</strong><br/>
+        18224113
       </a>
     </td>
   </tr>
