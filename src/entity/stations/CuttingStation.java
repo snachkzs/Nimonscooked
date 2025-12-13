@@ -82,7 +82,7 @@ public class CuttingStation extends Station {
                 
                 synchronized(this) {
                     item.setChopped(true);
-                    System.out.println(chef.getName() + " selesai memotong! Tekan C untuk ambil.");
+                    System.out.println(chef.getName() + " selesai memotong! Tekan / untuk ambil.");
                 }
                 
                 chef.setBusy(false);
