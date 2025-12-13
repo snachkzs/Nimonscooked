@@ -18,7 +18,7 @@ public class PlateStorage extends Station {
 
     @Override
     public void interact(Chef chef) {
-        // If holding dirty plates, can add more dirty plates (stacking)
+        // stack dirty plates if holding one
         if (chef.getInventory().size() == 1) {
             if (chef.getInventory().get(0) instanceof Plate) {
                 Plate heldPlate = (Plate) chef.getInventory().get(0);

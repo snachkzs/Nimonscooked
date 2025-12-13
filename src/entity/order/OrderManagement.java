@@ -61,7 +61,7 @@ public class OrderManagement {
             if (order.getRecipe().validate(plateContents)) {
                 System.out.println("Order " + order.getRecipe().getName() + " SELESAI! (+" + gp.SCORE_PER_ORDER + " pts)");
                 gp.currentScore += gp.SCORE_PER_ORDER;
-                gp.consecutiveFailedOrders = 0; // Reset failed counter on success
+                gp.consecutiveFailedOrders = 0;
                 activeOrders.remove(order);
                 
                 generateNewOrder();
@@ -88,7 +88,7 @@ public class OrderManagement {
                 if (o.isExpired()) {
                     System.out.println("Order " + o.getRecipe().getName() + " EXPIRED! (-" + o.getPenalty() + " pts)");
                     gp.currentScore -= o.getPenalty();
-                    gp.consecutiveFailedOrders++; // Count as failed order
+                    gp.consecutiveFailedOrders++;
                     activeOrders.remove(i);
                     i--;
                     

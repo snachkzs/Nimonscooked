@@ -77,7 +77,6 @@ public class CuttingStation extends Station {
                 System.out.println(chef.getName() + " mulai memotong... (Busy 3 detik)");
                 chef.setBusy(true);
                 
-                // Lock the station during cutting process
                 Thread.sleep(3000);
                 
                 synchronized(this) {

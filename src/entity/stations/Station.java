@@ -11,7 +11,6 @@ public abstract class Station {
     // Lock untuk thread-safe access
     protected final ReentrantLock lock = new ReentrantLock();
     
-    // Track chef yang sedang interact dengan station ini
     protected Chef interactingChef = null;
 
     public Station(int x, int y, int width, int height) {
