@@ -2,6 +2,9 @@ package controller;
 
 import main.GamePanel;
 import entity.Chef;
+import entity.Projectile;
+import entity.item.Item;
+import java.awt.Rectangle;
 
 public class CollisionChecker {
     
@@ -95,21 +98,17 @@ public class CollisionChecker {
         return index;
     }
 
-    // --- NEW METHOD: Check Collision with Other Chef ---
     public void checkChef(Chef entity) {
-        // Tentukan siapa targetnya (Chef lain)
         Chef target = (entity == gp.chefManager.getChef1()) ? gp.chefManager.getChef2() : gp.chefManager.getChef1();
         
         if(target == null) return;
 
-        // Update posisi collision area ke posisi absolut di layar
         entity.collisionArea.x = entity.getX() + entity.collisionArea.x;
         entity.collisionArea.y = entity.getY() + entity.collisionArea.y;
         
         target.collisionArea.x = target.getX() + target.collisionArea.x;
         target.collisionArea.y = target.getY() + target.collisionArea.y;
 
-        // Prediksi pergerakan entity
         switch(entity.getDirection()) {
             case "up": entity.collisionArea.y -= entity.getSpeed(); break;
             case "down": entity.collisionArea.y += entity.getSpeed(); break;
@@ -117,15 +116,65 @@ public class CollisionChecker {
             case "right": entity.collisionArea.x += entity.getSpeed(); break;
         }
 
-        // Cek apakah kotak collision bertabrakan
         if(entity.collisionArea.intersects(target.collisionArea)) {
             entity.collisionOn = true;
         }
 
-        // RESET posisi collision area ke default (PENTING!)
         entity.collisionArea.x = entity.collisionAreaDefaultX;
         entity.collisionArea.y = entity.collisionAreaDefaultY;
         target.collisionArea.x = target.collisionAreaDefaultX;
         target.collisionArea.y = target.collisionAreaDefaultY;
+    }
+
+    public Projectile calculateThrow(Chef thrower, Item itemToThrow) {
+        int steps = 4;
+        
+        int currentX = thrower.getX();
+        int currentY = thrower.getY();
+        
+        int destX = currentX;
+        int destY = currentY;
+        
+        Chef targetChef = null;
+        Chef otherChef = (thrower == gp.chefManager.getChef1()) ? gp.chefManager.getChef2() : gp.chefManager.getChef1();
+        
+        Rectangle throwArea = new Rectangle(0, 0, 24, 24);
+
+        for (int i = 1; i <= steps; i++) {
+            int nextX = destX;
+            int nextY = destY;
+            
+            switch(thrower.getDirection()) {
+                case "up": nextY -= gp.tileSize; break;
+                case "down": nextY += gp.tileSize; break;
+                case "left": nextX -= gp.tileSize; break;
+                case "right": nextX += gp.tileSize; break;
+            }
+
+            int col = (nextX + gp.tileSize/2) / gp.tileSize;
+            int row = (nextY + gp.tileSize/2) / gp.tileSize;
+            
+            if (col < 0 || col >= gp.maxScreenCol || row < 0 || row >= gp.maxScreenRow) break;
+            
+            int tileNum = gp.tileM.mapTileNum[col][row];
+            if (gp.tileM.tile[tileNum].collision) {
+                break; 
+            }
+            
+            destX = nextX;
+            destY = nextY;
+
+            throwArea.x = destX + 12; 
+            throwArea.y = destY + 12;
+            
+            Rectangle otherChefArea = new Rectangle(otherChef.getX()+8, otherChef.getY()+16, 32, 32);
+            
+            if (throwArea.intersects(otherChefArea)) {
+                targetChef = otherChef;
+                break;
+            }
+        }
+        
+        return new Projectile(gp, itemToThrow, currentX, currentY, destX, destY, targetChef);
     }
 }
