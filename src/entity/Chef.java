@@ -35,9 +35,16 @@ public class Chef implements Runnable {
 
     private ExecutorService taskScheduler;
     private Future<?> currentTask;
-    
+
     private int pickUpDropCooldown = 0;
     private final int PICK_UP_DROP_DELAY = 15;
+    private boolean isDashing = false;
+    private int dashCounter = 0;
+    private int dashCooldown = 0;
+    private final int DASH_DURATION = 15; 
+    private final int DASH_COOLDOWN_TIME = 120;
+    private final int BASE_SPEED = 4;
+    private final int DASH_SPEED = 12;
     
     private int spriteCounter = 0;
     private int spriteNum = 1;
@@ -50,7 +57,7 @@ public class Chef implements Runnable {
         this.id = id;
         this.name = name;
 
-        speed = 4;
+        speed = BASE_SPEED;
         direction = "down";
 
         collisionArea = new Rectangle();
@@ -64,7 +71,6 @@ public class Chef implements Runnable {
         taskScheduler = Executors.newSingleThreadExecutor();
     }
 
-    // Constructor overload untuk backward compatibility (jika ada)
     public Chef(GamePanel gp, KeyHandler keyH, int x, int y){
         this(gp, keyH, "C0", "Chef");
         this.x = x;
@@ -85,11 +91,7 @@ public class Chef implements Runnable {
     public void stopThread() {
         running = false;
         if (chefThread != null) {
-            try {
-                chefThread.join(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            try { chefThread.join(1000); } catch (InterruptedException e) { e.printStackTrace(); }
         }
     }
     
@@ -101,23 +103,13 @@ public class Chef implements Runnable {
         long lastTime = System.nanoTime();
         double nsPerTick = 1000000000.0 / 60.0;
         double delta = 0;
-        
         while (running) {
-            if (paused) {
-                try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
-                continue;
-            }
-            
+            if (paused) { try { Thread.sleep(100); } catch (InterruptedException e) {} continue; }
             long now = System.nanoTime();
             delta += (now - lastTime) / nsPerTick;
             lastTime = now;
-            
-            while (delta >= 1) {
-                update();
-                delta--;
-            }
-            
-            try { Thread.sleep(1); } catch (InterruptedException e) { e.printStackTrace(); }
+            while (delta >= 1) { update(); delta--; }
+            try { Thread.sleep(1); } catch (InterruptedException e) {}
         }
     }
 
@@ -139,14 +131,28 @@ public class Chef implements Runnable {
             return;
         }
         
-        if (!isActive) {
-            return;
-        }
+        if (!isActive) return;
         
-        if (pickUpDropCooldown > 0) {
-            pickUpDropCooldown--;
-        }
+        // cooldown
+        if (pickUpDropCooldown > 0) pickUpDropCooldown--;
+        if (dashCooldown > 0) dashCooldown--;
         
+        // logic dash
+        if (isDashing) {
+            dashCounter--;
+            if (dashCounter <= 0) {
+                isDashing = false;
+                speed = BASE_SPEED;
+                dashCooldown = DASH_COOLDOWN_TIME;
+                System.out.println("Dash ended");
+            }
+        } else if (keyH.dashPressed && dashCooldown == 0) {
+            isDashing = true;
+            speed = DASH_SPEED;
+            dashCounter = DASH_DURATION;
+            System.out.println("DASH!");
+        }
+
         if (keyH.pickUpDrop && pickUpDropCooldown == 0) {
             if (!interactWithNearbyStation()) {
                 int itemIndex = gp.collisionChecker.checkItem(this);
@@ -155,8 +161,12 @@ public class Chef implements Runnable {
             pickUpDropCooldown = PICK_UP_DROP_DELAY;
         }
         
+        // chop dan throw
         if (keyH.chopThrow && pickUpDropCooldown == 0) {
-            chopAtNearbyStation();
+            boolean chopping = chopAtNearbyStation();
+            if (!chopping && !inventory.isEmpty()) {
+                throwItem();
+            }
             pickUpDropCooldown = PICK_UP_DROP_DELAY;
         }
     
@@ -166,7 +176,6 @@ public class Chef implements Runnable {
             else if(keyH.downPressed){ direction = "down"; }
             else if(keyH.leftPressed){ direction = "left"; }
             else if(keyH.rightPressed){ direction = "right"; }
-
 
             collisionOn = false;
             gp.collisionChecker.checkTile(this);
@@ -186,7 +195,7 @@ public class Chef implements Runnable {
         
         if (isMoving) {
             spriteCounter++;
-            if (spriteCounter > 12) {
+            if (spriteCounter > (isDashing ? 5 : 12)) {
                 spriteNum = (spriteNum == 1) ? 2 : 1;
                 spriteCounter = 0;
             }
@@ -196,6 +205,22 @@ public class Chef implements Runnable {
         }
     }
     
+    // method throw
+    public void throwItem() {
+        if (inventory.isEmpty()) return;
+        
+        Item itemToThrow = inventory.remove(0);
+        
+        Projectile p = gp.collisionChecker.calculateThrow(this, itemToThrow);
+        
+        if (p != null) {
+            gp.addProjectile(p);
+            System.out.println("Melempar " + itemToThrow.getName());
+        } else {
+            inventory.add(itemToThrow);
+        }
+    }
+
     public void pickUpDrop(int i){
         if (i != 999){
             if (inventory.isEmpty()) {
@@ -204,61 +229,39 @@ public class Chef implements Runnable {
             } else if (inventory.size() >= INVENTORY_SIZE) {
                 Item droppedItem = inventory.remove(0);
                 droppedItem.setPosition(this.x, this.y);
-                
                 for (int j = 0; j < gp.itemList.length; j++) {
                     if (gp.itemList[j] == null) {
-                        gp.itemList[j] = droppedItem;
-                        break;
+                        gp.itemList[j] = droppedItem; break;
                     }
                 }
             }
         } else if (i == 999 && !inventory.isEmpty()) {
             Item droppedItem = inventory.remove(0);
             droppedItem.setPosition(this.x, this.y);
-            
             for (int j = 0; j < gp.itemList.length; j++) {
                 if (gp.itemList[j] == null) {
-                    gp.itemList[j] = droppedItem;
-                    break;
+                    gp.itemList[j] = droppedItem; break;
                 }
             }
         }
     }
     
     private entity.stations.Station findNearbyStation() {
+        int interactionRange = gp.tileSize; 
         entity.stations.Station closestStation = null;
         int minDistance = Integer.MAX_VALUE;
-        
         for (int i = 0; i < gp.stationList.length; i++) {
             if (gp.stationList[i] != null) {
                 int stationX = gp.stationList[i].x;
                 int stationY = gp.stationList[i].y;
-                
                 boolean isInFront = false;
                 int distance = 0;
-                int interactionRange = gp.tileSize; // Default range
-                
                 switch(direction) {
-                    case "up":
-                        isInFront = (stationY < this.y) && (Math.abs(stationX - this.x) <= gp.tileSize/2);
-                        distance = this.y - stationY;
-                        break;
-                    case "down":
-                        // Chef di atas station facing down - range dan tolerance lebih besar
-                        interactionRange = (int)(gp.tileSize * 1.2); // 1.5x range untuk down
-                        isInFront = (stationY > this.y) && (Math.abs(stationX - this.x) <= gp.tileSize);
-                        distance = stationY - this.y;
-                        break;
-                    case "left":
-                        isInFront = (stationX < this.x) && (Math.abs(stationY - this.y) <= gp.tileSize/2);
-                        distance = this.x - stationX;
-                        break;
-                    case "right":
-                        isInFront = (stationX > this.x) && (Math.abs(stationY - this.y) <= gp.tileSize/2);
-                        distance = stationX - this.x;
-                        break;
+                    case "up": isInFront = (stationY < this.y) && (Math.abs(stationX - this.x) <= gp.tileSize/2); distance = this.y - stationY; break;
+                    case "down": isInFront = (stationY > this.y) && (Math.abs(stationX - this.x) <= gp.tileSize/2); distance = stationY - this.y; break;
+                    case "left": isInFront = (stationX < this.x) && (Math.abs(stationY - this.y) <= gp.tileSize/2); distance = this.x - stationX; break;
+                    case "right": isInFront = (stationX > this.x) && (Math.abs(stationY - this.y) <= gp.tileSize/2); distance = stationX - this.x; break;
                 }
-                
                 if (isInFront && distance <= interactionRange && distance < minDistance) {
                     closestStation = gp.stationList[i];
                     minDistance = distance;
@@ -270,7 +273,6 @@ public class Chef implements Runnable {
     
     public boolean interactWithNearbyStation() {
         entity.stations.Station station = findNearbyStation();
-        
         if (station != null) {
             if (station.tryLock(this)) {
                 try {
@@ -288,29 +290,57 @@ public class Chef implements Runnable {
         return false;
     }
     
-    public void chopAtNearbyStation() {
+    public boolean chopAtNearbyStation() {
         entity.stations.Station station = findNearbyStation();
-        
         if (station != null && station.getType().equals("cutting_station")) {
             System.out.println("=== [V] Chopping at cutting station ===");
             entity.stations.CuttingStation cuttingStation = (entity.stations.CuttingStation) station;
             cuttingStation.startCutting(this);
-            return;
+            return true;
         }
-        System.out.println("Tidak ada cutting station di sekitar");
+        return false;
     }
 
-    public void setBusy(boolean busy) { this.isBusy = busy; }
-    public boolean isBusy() { return isBusy; }
-    public String getId() { return id; }
-    public String getName() { return name; }
-    public int getX() { return x; }
-    public void setX(int x) { this.x = x; }
-    public int getY() { return y; }
-    public void setY(int y) { this.y = y; }
-    public String getDirection() { return direction; }
-    public int getSpeed() { return speed; }
-    public boolean isMoving() { return isMoving; }
-    public int getSpriteNum() { return spriteNum; }
-    public ArrayList<Item> getInventory() { return inventory; }
+    public void setBusy(boolean busy){ 
+        this.isBusy = busy; 
+    }
+    public boolean isBusy(){ 
+        return isBusy; 
+    }
+    public String getId() { 
+        return id; 
+    }
+    public String getName() { 
+        return name; 
+    }
+    public int getX() { 
+        return x; 
+    }
+    public void setX(int x) { 
+        this.x = x; 
+    }
+    public int getY() { 
+        return y; 
+    }
+    public void setY(int y) { 
+        this.y = y; 
+    }
+    public String getDirection() { 
+        return direction; 
+    }
+    public int getSpeed() { 
+        return speed; 
+    }
+    public boolean isMoving() { 
+        return isMoving; 
+    }
+    public int getSpriteNum() { 
+        return spriteNum; 
+    }
+    public ArrayList<Item> getInventory() {
+         return inventory; 
+        }
+    public void clearInventory() { 
+        inventory.clear(); 
+    }
 }

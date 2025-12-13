@@ -6,7 +6,10 @@ import main.GamePanel;
 
 public class KeyHandler implements KeyListener{
 
-    public boolean upPressed, downPressed, leftPressed, rightPressed, chopThrow, pickUpDrop, swapChef, switchPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed;
+    public boolean chopThrow, pickUpDrop, swapChef, switchPressed;
+    public boolean dashPressed; 
+    
     GamePanel gp;
 
     public KeyHandler() {
@@ -97,6 +100,7 @@ public class KeyHandler implements KeyListener{
             if(code == KeyEvent.VK_SHIFT) {switchPressed = true;}
             if(code == KeyEvent.VK_SLASH) {pickUpDrop = true;}
             if(code == KeyEvent.VK_PERIOD) {chopThrow = true;}
+            if(code == KeyEvent.VK_B) {dashPressed = true;}
             
             if(code == KeyEvent.VK_ESCAPE) { 
                 gp.gameState = gp.pauseState;
@@ -123,7 +127,7 @@ public class KeyHandler implements KeyListener{
                     gp.gameState = gp.playState;
                 } else if (gp.pauseMenuSelection == 1) {
                     // Restart
-                    gp.gameState = gp.stageSelectState;
+                    gp.startGame();
                 } else if (gp.pauseMenuSelection == 2) {
                     // Main Menu
                     gp.gameState = gp.menuState;
@@ -150,6 +154,7 @@ public class KeyHandler implements KeyListener{
         if(code == KeyEvent.VK_SHIFT) {switchPressed = false;}
         if(code == KeyEvent.VK_SLASH) {pickUpDrop = false;}
         if(code == KeyEvent.VK_PERIOD) {chopThrow = false;}
+        if(code == KeyEvent.VK_B) {dashPressed = false;}
     }
     
 }
